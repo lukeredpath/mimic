@@ -2,16 +2,18 @@ module Mimic
   class FakeHost
     attr_reader :hostname
     
-    def initialize(hostname)
+    def initialize(hostname, unhandled_response_strategy = NotFoundResponseStrategy.new)
       @hostname = hostname
+      @stubs = {}
+      @unhandled_response_strategy = unhandled_response_strategy
     end
     
     def get(path)
-      map("GET", path) { [200, {}, ""] }
+      @stubs[path] = StubbedRequest.new("GET", path)
     end
     
     def call(env)
-      [200, {}, ""]
+      handler_for_call(env).call(env)
     end
     
     def terminate
@@ -20,8 +22,35 @@ module Mimic
     
     private
     
-    def map(method, path)
+    def handler_for_call(env)
+      (@stubs[env['PATH_INFO']] || @unhandled_response_strategy)
+    end
+    
+    class StubbedRequest
+      def initialize(method, path)
+        @method, @path = method, path
+        @code = 200
+        @headers = {}
+        @body = ""
+      end
       
+      def returning(body, code = 200, headers = {})
+        tap do
+          @body = body
+          @code = code
+          @headers = headers
+        end
+      end
+      
+      def call(env)
+        [@code, @headers, @body]
+      end
+    end
+    
+    class NotFoundResponseStrategy
+      def call(env)
+        [404, {}, ""]
+      end
     end
   end
 end
