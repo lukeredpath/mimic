@@ -8,6 +8,6 @@ Feature: Stubbing requests to return a response
       """
       Mimic.mimic("api.twitter.com").get("/1/statuses/public_timeline.json")
       """
-    When I make an HTTP GET request to "http://api.twitter.com/1/statuses/public_timeline.json"
+    When I make an HTTP GET request to "http://api.twitter.com:11988/1/statuses/public_timeline.json"
     Then I should receive an HTTP 200 response with an empty body
     

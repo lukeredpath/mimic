@@ -1,17 +1,7 @@
-Before do
-  @httpclient = HttpClient.new
+Given /^I have a mimic specification with:$/ do |string|
+  MimicRunner.new.evaluate(string)
 end
 
-When /^I make an HTTP (GET|POST|PUT|DELETE|HEAD) request to "([^\"]*)"$/ do |http_method, url|
-  @httpclient.perform_request(url, http_method)
-end
-
-Then /^I should receive an HTTP (\d+) response with an empty body$/ do |status_code|
-  steps %Q{
-    Then I should receive an HTTP #{status_code} response with a body matching ""
-  }
-end
-
-Then /^I should receive an HTTP (\d+) response with a body matching "([^\"]*)"$/ do |status_code, http_body|
-  @httpclient.should have_response_with_code_and_body(status_code, http_body)
+After do
+  Mimic.cleanup!
 end
