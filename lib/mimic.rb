@@ -34,19 +34,21 @@ module Mimic
 
     def serve(host_app, port)
       webrick_logger = logger
-      @pid = fork do
+      @thread = Thread.fork do
         Rack::Handler::WEBrick.run(host_app, 
           :Port      => port, 
           :Logger    => webrick_logger, 
           :AccessLog => webrick_logger
-        )
+          
+        ) { |server| @server = server }
       end
     end
     
     def shutdown
-      return unless @pid
-      Process.kill('ABRT', @pid)
-      Process.wait
+      if @thread
+        Thread.kill(@thread) 
+        @server.shutdown
+      end
     end
   end
   
