@@ -13,5 +13,5 @@ Then /^I should receive an HTTP (\d+) response with an empty body$/ do |status_c
 end
 
 Then /^I should receive an HTTP (\d+) response with a body matching "([^\"]*)"$/ do |status_code, http_body|
-  @httpclient.last_response.status.should == status_code
+  @httpclient.should have_response_with_code_and_body(status_code, http_body)
 end
