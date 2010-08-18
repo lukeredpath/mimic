@@ -5,10 +5,12 @@ require 'ghost'
 require 'logger'
 
 module Mimic
-  def self.mimic(hostname)
+  MIMIC_DEFAULT_PORT = 11988
+  
+  def self.mimic(hostname, port = MIMIC_DEFAULT_PORT)
     FakeHost.new(hostname).tap do |host|
       registry.register_host(host)
-      Server.instance.serve(host, default_port)
+      Server.instance.serve(host, port)
     end
   end
   
@@ -17,10 +19,6 @@ module Mimic
     registry.unregister_all_hosts
   end
 
-  def self.default_port
-    11988
-  end
-  
   private
   
   def self.registry
