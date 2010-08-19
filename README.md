@@ -10,15 +10,11 @@ Mimic aims to make it possible to test your networking code without actually hit
 
 Also, because Mimic responds to real HTTP requests, it can be used when testing non-Ruby applications too.
 
-## How does it work?
-
-Mimic's API is designed to be simple yet expressive. You simply register the host that you want to fake and then register any number of requests and responses. Mimic will then start an HTTP server (using Rack and WEBRick) on the specified port and add an entry to your hosts file (OSX and Linux only) for that host.
-
 ## Examples
 
 Registering to a single request stub:
 
-    Mimic.mimic("www.example.com", 10090).get("/some/path").returning("hello world")
+    Mimic.mimic.get("/some/path").returning("hello world")
     
 And the result, using RestClient:
   
@@ -26,7 +22,7 @@ And the result, using RestClient:
   
 Registering multiple request stubs; note that you can stub the same path with different HTTP methods separately.
 
-    Mimic.mimic("www.example.com", 10090) do
+    Mimic.mimic do
       get("/some/path").returning("Hello World", 200)
       get("/some/other/path").returning("Redirecting...", 301, {"Location" => "somewhere else"})
       post("/some/path").returning("Created!", 201)
@@ -34,7 +30,7 @@ Registering multiple request stubs; note that you can stub the same path with di
     
 You can even use Rack middlewares, e.g. to handle common testing scenarios such as authentication:
 
-    Mimic.mimic("www.example.com", 10090) do
+    Mimic.mimic do
       use Rack::Auth::Basic do |user, pass|
         user == 'theuser' and pass == 'thepass'
       end
@@ -42,12 +38,15 @@ You can even use Rack middlewares, e.g. to handle common testing scenarios such 
       get("/some/path")
     end
     
-## Caveats
+Finally, because Mimic is built on top of Sinatra for the core request handling, you can create your stubbed requests like you would in any Sinatra app:
 
-* Because the server is not started on port 80, you need a way of configuring your application under test to use a different port at runtime.
-
-* Mimic uses the Ghost gem to modify the hosts file and is therefore dependent on support for this gem. In addition, Ghost currently requires sudo privileges to run which means entering your password. I'm happy to hear any suggestions for working around this.
+    Mimic.mimic do
+      get "/some/path" do
+        [200, {}, "hello world"]
+      end
+    end
 
 ## License
 
 As usual, the code is released under the MIT license which is included in the repository.
+
