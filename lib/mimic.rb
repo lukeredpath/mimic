@@ -36,12 +36,38 @@ module Mimic
           
         ) { |server| @server = server }
       end
+      
+      wait_for_service(host_app.hostname, port)
     end
     
     def shutdown
       if @thread
         Thread.kill(@thread) 
         @server.shutdown
+      end
+    end
+    
+    # courtesy of http://is.gd/eoYho
+    
+    def listening?(host, port)
+      begin
+        socket = TCPSocket.new(host, port)
+        socket.close unless socket.nil?
+        true
+      rescue Errno::ECONNREFUSED, SocketError,
+        Errno::EBADF,           # Windows
+        Errno::EADDRNOTAVAIL    # Windows
+        false
+      end
+    end
+
+    def wait_for_service(host, port, timeout = 5)
+      start_time = Time.now
+
+      until listening?(host, port)
+        if timeout && (Time.now > (start_time + timeout))
+          raise SocketError.new("Socket did not open within #{timeout} seconds")
+        end
       end
     end
   end
