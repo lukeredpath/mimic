@@ -19,3 +19,11 @@ Feature: Stubbing requests to return a response
     When I make an HTTP GET request to "http://www.example.com:11988/some/path"
     Then I should receive an HTTP 200 response with a body matching "Hello World"
     
+  Scenario: Requesting an un-stubbed path and getting a 404 response
+    Given I have a mimic specification with:
+      """
+      Mimic.mimic("www.example.com", 11988).get("/some/path")
+      """
+    When I make an HTTP GET request to "http://www.example.com:11988/some/other/path"
+    Then I should receive an HTTP 404 response with an empty body
+    

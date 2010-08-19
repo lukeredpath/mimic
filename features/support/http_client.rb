@@ -8,7 +8,9 @@ class HttpClient
   end
   
   def perform_request(url, method)
-    @last_response = RestClient.send(method.downcase, url)
+    RestClient.send(method.downcase, url) do |response, request|
+      @last_response = response
+    end
   end
   
   def has_response_with_code_and_body?(status_code, response_body)
