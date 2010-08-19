@@ -7,9 +7,10 @@ require 'logger'
 module Mimic
   MIMIC_DEFAULT_PORT = 11988
   
-  def self.mimic(hostname, port = MIMIC_DEFAULT_PORT)
+  def self.mimic(hostname, port = MIMIC_DEFAULT_PORT, &block)
     FakeHost.new(hostname).tap do |host|
       registry.register_host(host)
+      host.instance_eval(&block) if block_given?
       Server.instance.serve(host, port)
     end
   end

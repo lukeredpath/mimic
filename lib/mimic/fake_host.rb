@@ -39,11 +39,17 @@ module Mimic
     private
     
     def request(method, path)
-      @stubs[path] = StubbedRequest.new(method, path)
+      stubbed_request = StubbedRequest.new(method, path)
+      @stubs[stubbed_request.key] = stubbed_request
     end
     
     def handler_for_call(env)
-      (@stubs[env['PATH_INFO']] || @unhandled_response_strategy)
+      (@stubs[request_key(env)] || @unhandled_response_strategy)
+    end
+    
+    def request_key(env)
+      request = Rack::Request.new(env)
+      StubbedRequest.key(request.request_method, request.path)
     end
     
     class StubbedRequest
@@ -64,6 +70,14 @@ module Mimic
       
       def call(env)
         [@code, @headers, @body]
+      end
+      
+      def key
+        self.class.key(@method, @path)
+      end
+      
+      def self.key(method, path)
+        "#{method} #{path}"
       end
     end
     

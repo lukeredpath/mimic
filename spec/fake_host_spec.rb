@@ -32,6 +32,19 @@ describe "Mimic::FakeHost" do
     @host.call(request_for("/some/other/path"))
   end
   
+  it "should not recognize requests if they have the incorrect HTTP method" do
+    @host.get("/some/path")
+    @unhandled_response_strategy.expects(:call)
+    @host.call(request_for("/some/path", :method => "POST"))
+  end
+  
+  it "should not handle multiple requests to a path with different HTTP methods" do
+    @host.get("/some/path").returning("GET Request", 200)
+    @host.post("/some/path").returning("POST Request", 201)
+    @host.call(request_for("/some/path", :method => "GET")).should return_rack_response(200, {}, "GET Request")
+    @host.call(request_for("/some/path", :method => "POST")).should return_rack_response(201, {}, "POST Request")
+  end
+  
   context "in its default configuration" do
     before do
       @host = Mimic::FakeHost.new("www.example.com")
@@ -44,8 +57,9 @@ describe "Mimic::FakeHost" do
  
   private
   
-  def request_for(path)
-    {"PATH_INFO" => path}
+  def request_for(path, options={})
+    options = {:method => "GET"}.merge(options)
+    {"PATH_INFO" => path, "REQUEST_METHOD" => options[:method]}
   end
  
   def return_rack_response(code, headers, body)
