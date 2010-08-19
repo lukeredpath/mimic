@@ -1,7 +1,7 @@
-Feature: Stubbing requests to return a response
+Feature: Stubbing requests by path
   In order to test my app through its entire stack without depending on an external API
   As a developer
-  I want to be able to stub specific requests to return a canned response
+  I want to be able to stub requests to specific paths to return a canned response
   
   Scenario: Stubbing a GET request to /some/path and return an empty response
     Given I have a mimic specification with:
