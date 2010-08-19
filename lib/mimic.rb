@@ -7,23 +7,17 @@ require 'logger'
 module Mimic
   MIMIC_DEFAULT_PORT = 11988
   
-  def self.mimic(hostname, port = MIMIC_DEFAULT_PORT, &block)
-    FakeHost.new(hostname).tap do |host|
-      registry.register_host(host)
+  def self.mimic(options = {}, &block)
+    options = {:hostname => 'localhost', :port => MIMIC_DEFAULT_PORT}.merge(options)
+    
+    FakeHost.new(options[:hostname]).tap do |host|
       host.instance_eval(&block) if block_given?
-      Server.instance.serve(host, port)
+      Server.instance.serve(host, options[:port])
     end
   end
   
   def self.cleanup!
     Mimic::Server.instance.shutdown
-    registry.unregister_all_hosts
-  end
-
-  private
-  
-  def self.registry
-    @registry ||= Registry.new
   end
 
   class Server
@@ -34,12 +28,11 @@ module Mimic
     end
 
     def serve(host_app, port)
-      webrick_logger = logger
       @thread = Thread.fork do
         Rack::Handler::WEBrick.run(host_app, 
           :Port      => port, 
-          :Logger    => webrick_logger, 
-          :AccessLog => webrick_logger
+          :Logger    => logger, 
+          :AccessLog => logger
           
         ) { |server| @server = server }
       end
@@ -50,26 +43,6 @@ module Mimic
         Thread.kill(@thread) 
         @server.shutdown
       end
-    end
-  end
-  
-  class Registry
-    def initialize
-      @hosts = []
-    end
-    
-    def register_host(host)
-      @hosts << host
-      Host.add(host.hostname)
-    end
-    
-    def unregister_host(host)
-      @hosts.delete(host)
-      Host.delete(host.hostname)
-    end
-    
-    def unregister_all_hosts
-      @hosts.each { |host| unregister_host(host) }
     end
   end
 end
