@@ -16,3 +16,7 @@ Then /^I should receive an HTTP (\d+) response with a body matching "([^\"]*)"$/
   @httpclient.should have_response_with_code_and_body(status_code.to_i, http_body)
 end
 
+Then /^I should receive an HTTP (\d+) response$/ do |status_code|
+  @httpclient.should have_response_with_code(status_code.to_i)
+end
+

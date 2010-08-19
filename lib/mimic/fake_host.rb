@@ -6,6 +6,7 @@ module Mimic
       @hostname = hostname
       @stubs = {}
       @unhandled_response_strategy = unhandled_response_strategy
+      @middlewares = []
     end
     
     def get(path)
@@ -29,7 +30,15 @@ module Mimic
     end
     
     def call(env)
-      handler_for_call(env).call(env)
+      inner_app = handler_for_call(env)
+      outer_app = @middlewares.reverse.inject(inner_app) do |app, middleware|
+        middleware.call(app)
+      end
+      outer_app.call(env)
+    end
+    
+    def use(middleware_klass, *args, &block)
+      @middlewares << lambda { |app| middleware_klass.new(app, *args, &block) }
     end
     
     def terminate
