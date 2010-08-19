@@ -1,7 +1,6 @@
 require 'mimic/fake_host'
 require 'singleton'
 require 'rack'
-require 'ghost'
 require 'logger'
 
 module Mimic
