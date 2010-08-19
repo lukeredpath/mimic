@@ -8,7 +8,7 @@ There are already some good tools, like [FakeWeb](http://fakeweb.rubyforge.org/)
 
 Mimic aims to make it possible to test your networking code without actually hitting the real services by starting up a real web server and responding to HTTP requests. This lets you test your application against canned responses in an as-close-to-the-real-thing-as-possible way.
 
-Also, because Mimic starts responds to real HTTP requests, it can be used when testing non-Ruby applications too (like an iPhone application).
+Also, because Mimic responds to real HTTP requests, it can be used when testing non-Ruby applications too.
 
 ## How does it work?
 
