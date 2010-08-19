@@ -43,12 +43,13 @@ spec = Gem::Specification.new do |s|
 
   # If you want to depend on other gems, add them here, along with any
   # relevant versions
-  s.add_dependency("ghost", "~> 0.2.5")
-  s.add_dependency("rack", "~> 1.2.1")
+  s.add_dependency("rack")
+  s.add_dependency("sinatra")
 
   # If your tests use any gems, include them here
   s.add_development_dependency("rspec")
   s.add_development_dependency("cucumber")
+  s.add_development_dependency("mocha")
 end
 
 # This task actually builds the gem. We also regenerate a static
