@@ -1,12 +1,17 @@
+require 'sinatra/base'
+
 module Mimic
   class FakeHost
     attr_reader :hostname
     
-    def initialize(hostname, unhandled_response_strategy = NotFoundResponseStrategy.new)
+    def initialize(hostname)
       @hostname = hostname
-      @stubs = {}
-      @unhandled_response_strategy = unhandled_response_strategy
-      @middlewares = []
+      @stubs = []
+      @app = Class.new(Sinatra::Base)
+      
+      @app.not_found do
+        [404, {}, ""]
+      end
     end
     
     def get(path)
@@ -30,43 +35,32 @@ module Mimic
     end
     
     def call(env)
-      inner_app = handler_for_call(env)
-      outer_app = @middlewares.reverse.inject(inner_app) do |app, middleware|
-        middleware.call(app)
-      end
-      outer_app.call(env)
+      @stubs.each(&:build)
+      @app.call(env)
     end
     
-    def use(middleware_klass, *args, &block)
-      @middlewares << lambda { |app| middleware_klass.new(app, *args, &block) }
-    end
-    
-    def terminate
-      Mimic.terminate(@hostname)
+    def method_missing(method, *args, &block)
+      @app.send(method, *args, &block)
     end
     
     private
     
-    def request(method, path)
-      stubbed_request = StubbedRequest.new(method, path)
-      @stubs[stubbed_request.key] = stubbed_request
-    end
-    
-    def handler_for_call(env)
-      (@stubs[request_key(env)] || @unhandled_response_strategy)
-    end
-    
-    def request_key(env)
-      request = Rack::Request.new(env)
-      StubbedRequest.key(request.request_method, request.path)
+    def request(method, path, &block)
+      if block_given?
+        @app.send(method.downcase, path, &block)
+      else
+        @stubs << StubbedRequest.new(@app, method, path)
+        @stubs.last
+      end
     end
     
     class StubbedRequest
-      def initialize(method, path)
+      def initialize(app, method, path)
         @method, @path = method, path
         @code = 200
         @headers = {}
         @body = ""
+        @app = app
       end
       
       def returning(body, code = 200, headers = {})
@@ -77,22 +71,9 @@ module Mimic
         end
       end
       
-      def call(env)
-        [@code, @headers, @body]
-      end
-      
-      def key
-        self.class.key(@method, @path)
-      end
-      
-      def self.key(method, path)
-        "#{method} #{path}"
-      end
-    end
-    
-    class NotFoundResponseStrategy
-      def call(env)
-        [404, {}, ""]
+      def build
+        response = [@code, @headers, @body]
+        @app.send(@method.downcase, @path) { response }
       end
     end
   end

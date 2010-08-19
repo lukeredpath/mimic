@@ -27,7 +27,7 @@ spec = Gem::Specification.new do |s|
 
   # Change these as appropriate
   s.name              = "mimic"
-  s.version           = "0.1.0"
+  s.version           = "0.2.0"
   s.summary           = "A Ruby gem for faking external web services for testing"
   s.author            = "Luke Redpath"
   s.email             = "luke@lukeredpath.co.uk"
@@ -43,12 +43,13 @@ spec = Gem::Specification.new do |s|
 
   # If you want to depend on other gems, add them here, along with any
   # relevant versions
-  s.add_dependency("ghost", "~> 0.2.5")
-  s.add_dependency("rack", "~> 1.2.1")
+  s.add_dependency("rack")
+  s.add_dependency("sinatra")
 
   # If your tests use any gems, include them here
   s.add_development_dependency("rspec")
   s.add_development_dependency("cucumber")
+  s.add_development_dependency("mocha")
 end
 
 # This task actually builds the gem. We also regenerate a static

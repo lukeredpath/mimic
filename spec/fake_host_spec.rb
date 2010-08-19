@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe "Mimic::FakeHost" do
   before do
-    @unhandled_response_strategy = mock("UnhandledResponseStrategy")
-    @host = Mimic::FakeHost.new("www.example.com", @unhandled_response_strategy)
+    @host = Mimic::FakeHost.new("www.example.com")
   end
   
   it "should handle stubbed requests" do
@@ -26,16 +25,9 @@ describe "Mimic::FakeHost" do
     @host.call(request_for("/some/path")).should return_rack_response(301, {"Location" => "http://somewhereelse.com"}, "redirecting")
   end
   
-  it "should delegate unhandled calls to its unhandled response strategy" do
-    @host.get("/some/path")
-    @unhandled_response_strategy.expects(:call).with(request_for("/some/other/path"))
-    @host.call(request_for("/some/other/path"))
-  end
-  
   it "should not recognize requests if they have the incorrect HTTP method" do
     @host.get("/some/path")
-    @unhandled_response_strategy.expects(:call)
-    @host.call(request_for("/some/path", :method => "POST"))
+    @host.call(request_for("/some/path", :method => "POST")).should return_rack_response(404, {}, "")
   end
   
   it "should not handle multiple requests to a path with different HTTP methods" do
@@ -44,69 +36,22 @@ describe "Mimic::FakeHost" do
     @host.call(request_for("/some/path", :method => "GET")).should return_rack_response(200, {}, "GET Request")
     @host.call(request_for("/some/path", :method => "POST")).should return_rack_response(201, {}, "POST Request")
   end
-  
-  it "should proxy all requests through any specified middlewares" do
-    middleware_one = DummyMiddleware.new("FirstMiddleware")
-    middleware_two = DummyMiddleware.new("SecondMiddleware")
-    
-    @host.use(middleware_one)
-    @host.use(middleware_two)
-    
-    request = request_for("/some/path")    
-    @unhandled_response_strategy.expects(:call).with(request)
-    
-    @host.call(request)
-    middleware_one.should have_been_called
-    middleware_two.should have_been_called
-  end
-  
-  context "in its default configuration" do
-    before do
-      @host = Mimic::FakeHost.new("www.example.com")
-    end
-    
-    it "should handle unstubbed requests with an empty 404 response" do
-      @host.call({}).should return_rack_response(404, {}, "")
-    end
-  end
  
   private
   
   def request_for(path, options={})
     options = {:method => "GET"}.merge(options)
-    {"PATH_INFO" => path, "REQUEST_METHOD" => options[:method]}
+    { "PATH_INFO"      => path, 
+      "REQUEST_METHOD" => options[:method],
+      "rack.errors"    => StringIO.new,
+      "rack.input"     => StringIO.new }
   end
  
   def return_rack_response(code, headers, body)
     simple_matcher "return rack response" do |actual|
-      actual == [code, headers, body]
-    end
-  end
-  
-  class DummyMiddleware
-    attr_reader :name
-    
-    def initialize(name)
-      @called = false
-      @name = name
-    end
-    
-    def new(app)
-      @app = app
-      self
-    end
-    
-    def has_been_called?
-      @called
-    end
-    
-    def inspect
-      "<DummyMiddleware #{@name}>"
-    end
-    
-    def call(env)
-      @called = true
-      @app.call(env)
+      (actual[0].should == code) &&
+      (actual[1].should include(headers)) &&
+      (actual[2].should include(body))
     end
   end
 end
