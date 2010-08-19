@@ -9,7 +9,23 @@ module Mimic
     end
     
     def get(path)
-      @stubs[path] = StubbedRequest.new("GET", path)
+      request("GET", path)
+    end
+    
+    def post(path)
+      request("POST", path)
+    end
+    
+    def put(path)
+      request("PUT", path)
+    end
+    
+    def delete(path)
+      request("DELETE", path)
+    end
+    
+    def head(path)
+      request("HEAD", path)
     end
     
     def call(env)
@@ -21,6 +37,10 @@ module Mimic
     end
     
     private
+    
+    def request(method, path)
+      @stubs[path] = StubbedRequest.new(method, path)
+    end
     
     def handler_for_call(env)
       (@stubs[env['PATH_INFO']] || @unhandled_response_strategy)

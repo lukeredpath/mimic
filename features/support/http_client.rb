@@ -8,7 +8,7 @@ class HttpClient
   end
   
   def perform_request(url, method)
-    RestClient.send(method.downcase, url) do |response, request|
+    RestClient.send(method.downcase, url, {}) do |response, request|
       @last_response = response
     end
   end
