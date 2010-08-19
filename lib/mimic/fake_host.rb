@@ -14,24 +14,24 @@ module Mimic
       end
     end
     
-    def get(path)
-      request("GET", path)
+    def get(path, &block)
+      request("GET", path, &block)
     end
     
-    def post(path)
-      request("POST", path)
+    def post(path, &block)
+      request("POST", path, &block)
     end
     
-    def put(path)
-      request("PUT", path)
+    def put(path, &block)
+      request("PUT", path, &block)
     end
     
-    def delete(path)
-      request("DELETE", path)
+    def delete(path, &block)
+      request("DELETE", path, &block)
     end
     
-    def head(path)
-      request("HEAD", path)
+    def head(path, &block)
+      request("HEAD", path, &block)
     end
     
     def call(env)
