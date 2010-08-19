@@ -32,6 +32,16 @@ Registering multiple request stubs; note that you can stub the same path with di
       post("/some/path").returning("Created!", 201)
     end
     
+You can even use Rack middlewares, e.g. to handle common testing scenarios such as authentication:
+
+    Mimic.mimic("www.example.com", 10090) do
+      use Rack::Auth::Basic do |user, pass|
+        user == 'theuser' and pass == 'thepass'
+      end
+      
+      get("/some/path")
+    end
+    
 ## Caveats
 
 * Because the server is not started on port 80, you need a way of configuring your application under test to use a different port at runtime.
