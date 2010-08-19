@@ -45,6 +45,21 @@ describe "Mimic::FakeHost" do
     @host.call(request_for("/some/path", :method => "POST")).should return_rack_response(201, {}, "POST Request")
   end
   
+  it "should proxy all requests through any specified middlewares" do
+    middleware_one = DummyMiddleware.new("FirstMiddleware")
+    middleware_two = DummyMiddleware.new("SecondMiddleware")
+    
+    @host.use(middleware_one)
+    @host.use(middleware_two)
+    
+    request = request_for("/some/path")    
+    @unhandled_response_strategy.expects(:call).with(request)
+    
+    @host.call(request)
+    middleware_one.should have_been_called
+    middleware_two.should have_been_called
+  end
+  
   context "in its default configuration" do
     before do
       @host = Mimic::FakeHost.new("www.example.com")
@@ -65,6 +80,33 @@ describe "Mimic::FakeHost" do
   def return_rack_response(code, headers, body)
     simple_matcher "return rack response" do |actual|
       actual == [code, headers, body]
+    end
+  end
+  
+  class DummyMiddleware
+    attr_reader :name
+    
+    def initialize(name)
+      @called = false
+      @name = name
+    end
+    
+    def new(app)
+      @app = app
+      self
+    end
+    
+    def has_been_called?
+      @called
+    end
+    
+    def inspect
+      "<DummyMiddleware #{@name}>"
+    end
+    
+    def call(env)
+      @called = true
+      @app.call(env)
     end
   end
 end
