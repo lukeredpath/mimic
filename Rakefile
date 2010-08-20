@@ -28,9 +28,9 @@ spec = Gem::Specification.new do |s|
 
   # Change these as appropriate
   s.name              = "mimic"
-  s.version           = "0.2.0"
+  s.version           = "0.3.0"
   s.summary           = "A Ruby gem for faking external web services for testing"
-  s.author            = "Luke Redpath"
+  s.authors           = "Luke Redpath"
   s.email             = "luke@lukeredpath.co.uk"
   s.homepage          = "http://lukeredpath.co.uk"
 
