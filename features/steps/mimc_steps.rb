@@ -4,5 +4,4 @@ end
 
 After do
   Mimic.cleanup!
-  sleep(0.5)
 end
