@@ -83,3 +83,8 @@ desc 'Clear out RDoc and generated packages'
 task :clean => [:clobber_rdoc, :clobber_package] do
   rm "#{spec.name}.gemspec"
 end
+
+task 'Release if all specs pass'
+task :release => [:specs, :features, :package] do
+  system("gem push pkg/#{spec.name}-#{spec.version}.gem")
+end
