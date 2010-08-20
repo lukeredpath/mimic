@@ -37,7 +37,7 @@ describe "Mimic::FakeHost" do
     @host.call(request_for("/some/path", :method => "POST")).should return_rack_response(201, {}, "POST Request")
   end
   
-  it "should handle requests with behaviour specified through Sinatra" do
+  it "should handle requests with behaviour specified in a block using the Sinatra API" do
     @host.get("/some/path") do
       content_type 'text/plain'
       'bobby'
