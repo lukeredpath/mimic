@@ -14,6 +14,7 @@ Spec::Rake::SpecTask.new('specs') do |t|
 end
 
 task :default => :specs
+task :all => [:specs, :features]
 
 require "rake/gempackagetask"
 require "rake/rdoctask"
