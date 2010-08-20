@@ -46,6 +46,10 @@ Finally, because Mimic is built on top of Sinatra for the core request handling,
       end
     end
 
+## Contributors
+
+* [James Fairbairn](http://github.com/jfairbairn)
+
 ## License
 
 As usual, the code is released under the MIT license which is included in the repository.
