@@ -15,11 +15,11 @@ Also, because Mimic responds to real HTTP requests, it can be used when testing 
 Registering to a single request stub:
 
     Mimic.mimic.get("/some/path").returning("hello world")
-    
+
 And the result, using RestClient:
-  
-    $ RestClient.get("http://www.example.com:10090/some/path") # => 200 | hello world
-  
+
+    $ RestClient.get("http://localhost:11988/some/path") # => 200 | hello world
+
 Registering multiple request stubs; note that you can stub the same path with different HTTP methods separately.
 
     Mimic.mimic do
@@ -27,17 +27,17 @@ Registering multiple request stubs; note that you can stub the same path with di
       get("/some/other/path").returning("Redirecting...", 301, {"Location" => "somewhere else"})
       post("/some/path").returning("Created!", 201)
     end
-    
+  
 You can even use Rack middlewares, e.g. to handle common testing scenarios such as authentication:
 
     Mimic.mimic do
       use Rack::Auth::Basic do |user, pass|
         user == 'theuser' and pass == 'thepass'
       end
-      
+
       get("/some/path")
     end
-    
+
 Finally, because Mimic is built on top of Sinatra for the core request handling, you can create your stubbed requests like you would in any Sinatra app:
 
     Mimic.mimic do
