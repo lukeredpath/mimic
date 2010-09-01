@@ -18,7 +18,7 @@ Registering to a single request stub:
     
 And the result, using RestClient:
   
-    $ RestClient.get("http://www.example.com:10090/some/path") # => 200 | hello world
+    $ RestClient.get("http://www.example.com:11988/some/path") # => 200 | hello world
   
 Registering multiple request stubs; note that you can stub the same path with different HTTP methods separately.
 
