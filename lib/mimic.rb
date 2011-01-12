@@ -28,7 +28,11 @@ module Mimic
   
   def self.cleanup!
     Mimic::Server.instance.shutdown
-    @daemon.zap_all
+
+    if @daemon
+      @daemon.zap_all
+      @daemon = nil
+    end
   end
 
   class Server

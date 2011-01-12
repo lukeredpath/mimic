@@ -15,7 +15,7 @@ module Mimic
     %w{get post put delete head}.each do |verb|
       post "/#{verb}" do
         data = JSON.parse(request.body.string)
-        host.send(verb, data['path'])
+        host.send(verb, data['path']).returning(data['body'] || '', data['code'] || 200)
         [201, {}, data.inspect]
       end
     end

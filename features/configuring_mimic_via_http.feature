@@ -60,3 +60,23 @@ Feature: Configuring Mimic via an HTTP interface
     Then I should receive an HTTP 201 response
     And I make an HTTP GET request to "http://localhost:11988/anything"
     Then I should receive an HTTP 200 response with an empty body
+
+  Scenario: Stubbing a request path to return a custom response body
+    Given that Mimic is daemonized and accepting remote configuration on "/api"
+    When I make an HTTP POST request to "http://localhost:11988/api/get" with the payload:
+      """
+        {"path": "/anything", "body": "Hello World"}
+      """
+    Then I should receive an HTTP 201 response
+    And I make an HTTP GET request to "http://localhost:11988/anything"
+    Then I should receive an HTTP 200 response with a body matching "Hello World"
+    
+  Scenario: Stubbing a request path to return a custom status code
+    Given that Mimic is daemonized and accepting remote configuration on "/api"
+    When I make an HTTP POST request to "http://localhost:11988/api/get" with the payload:
+      """
+        {"path": "/anything", "code": 301}
+      """
+    Then I should receive an HTTP 201 response
+    And I make an HTTP GET request to "http://localhost:11988/anything"
+    Then I should receive an HTTP 301 response with an empty body
