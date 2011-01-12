@@ -91,3 +91,19 @@ Feature: Configuring Mimic via an HTTP interface
     And I make an HTTP GET request to "http://localhost:11988/anything"
     Then I should receive an HTTP 200 response with the value "TESTING" for the header "X-TEST-HEADER"
     
+  Scenario: Stubbing a request using the HTTP API in plist format
+    Given that Mimic is daemonized and accepting remote configuration on "/api"
+    When I make an HTTP POST request with a "application/plist" content-type to "http://localhost:11988/api/get" and the payload:
+      """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+          <key>path</key>
+          <string>/anything</string>
+        </dict>
+        </plist>
+      """
+    Then I should receive an HTTP 201 response
+    And I make an HTTP GET request to "http://localhost:11988/anything"
+    Then I should receive an HTTP 200 response with an empty body

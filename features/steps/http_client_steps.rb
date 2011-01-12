@@ -6,6 +6,10 @@ When /^I make an HTTP (POST|PUT) request to "([^\"]*)" with the payload:$/ do |h
   @httpclient.perform_request_with_payload(url, http_method, payload)
 end
 
+When /^I make an HTTP (POST|PUT) request with a "([^\"]*)" content-type to "([^\"]*)" and the payload:$/ do |http_method, content_type, url, payload|
+  @httpclient.perform_request_with_payload(url, http_method, payload, :content_type => content_type)
+end
+
 When /^I make an HTTP (GET|POST|PUT|DELETE|HEAD) request to "([^\"]*)"$/ do |http_method, url|
   @httpclient.perform_request(url, http_method)
 end

@@ -4,6 +4,7 @@ PATH
     mimic (0.3.0)
       daemons
       json
+      plist
       rack
       sinatra
 
@@ -25,6 +26,7 @@ GEM
     mime-types (1.16)
     mocha (0.9.10)
       rake
+    plist (3.1.0)
     rack (1.2.1)
     rake (0.8.7)
     rest-client (1.6.1)
@@ -52,6 +54,7 @@ DEPENDENCIES
   json
   mimic!
   mocha
+  plist
   rack
   rest-client
   rspec (~> 2.4.0)
