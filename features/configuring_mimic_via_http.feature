@@ -11,6 +11,16 @@ Feature: Configuring Mimic via an HTTP interface
     When I make an HTTP GET request to "http://localhost:11988/anything"
     Then I should receive an HTTP 404 response with an empty body
     
+  Scenario: Starting Mimic in the background with pre-configured stubs
+    Given I execute the script:
+      """
+      Mimic.daemonize({:port => 11988, :remote_configuration_path => '/api'}, :ARGV => ['run']) do
+        get("/preconfigured").returning("test response")
+      end
+      """
+    When I make an HTTP GET request to "http://localhost:11988/preconfigured"
+    Then I should receive an HTTP 200 response with a body matching "test response"
+    
   Scenario: Stubbing a request path via GET using the HTTP API
     Given that Mimic is daemonized and accepting remote configuration on "/api"
     When I make an HTTP POST request to "http://localhost:11988/api/get" with the payload:

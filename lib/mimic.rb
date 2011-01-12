@@ -22,8 +22,8 @@ module Mimic
     end
   end
   
-  def self.daemonize(options = {}, daemon_options = {})
-    @daemon = Daemons.run_proc('mimic', daemon_options) { mimic(options) }
+  def self.daemonize(options = {}, daemon_options = {}, &block)
+    @daemon = Daemons.run_proc('mimic', daemon_options) { mimic(options, &block) }
   end
   
   def self.cleanup!
