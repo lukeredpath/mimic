@@ -34,4 +34,17 @@ class HttpClient
       @last_response.code.to_i == status_code
     end
   end
+  
+  def has_response_with_code_and_header?(status_code, header_key, header_value)
+    if @last_response
+      @last_response.code.to_i == status_code &&
+      @last_response.headers[beautify_header(header_key)] == header_value
+    end
+  end
+  
+  private
+  
+  def beautify_header(header_key)
+    header_key.downcase.gsub(/-/, '_').to_sym
+  end
 end

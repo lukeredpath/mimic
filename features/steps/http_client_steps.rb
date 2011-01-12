@@ -24,3 +24,6 @@ Then /^I should receive an HTTP (\d+) response$/ do |status_code|
   @httpclient.should have_response_with_code(status_code.to_i)
 end
 
+Then /^I should receive an HTTP (\d+) response with the value "([^\"]*)" for the header "([^\"]*)"$/ do |status_code, header_value, header_key|
+  @httpclient.should have_response_with_code_and_header(status_code.to_i, header_key, header_value)
+end
