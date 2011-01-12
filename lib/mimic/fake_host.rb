@@ -1,17 +1,21 @@
 require 'sinatra/base'
+require 'mimic/api'
 
 module Mimic
   class FakeHost
-    attr_reader :hostname
+    attr_reader :hostname, :url_map
     
-    def initialize(hostname)
+    def initialize(hostname, remote_configuration_path = nil)
       @hostname = hostname
       @stubs = []
       @app = Class.new(Sinatra::Base)
-      
+      @remote_configuration_path = remote_configuration_path
+
       @app.not_found do
         [404, {}, ""]
       end
+      
+      build_url_map!
     end
     
     def get(path, &block)
@@ -52,6 +56,17 @@ module Mimic
         @stubs << StubbedRequest.new(@app, method, path)
         @stubs.last
       end
+    end
+    
+    def build_url_map!
+      routes = {'/' => self}
+      
+      if @remote_configuration_path
+        API.host = self
+        routes[@remote_configuration_path] = API
+      end
+
+      @url_map = Rack::URLMap.new(routes)
     end
     
     class StubbedRequest

@@ -47,6 +47,7 @@ spec = Gem::Specification.new do |s|
   s.add_dependency("rack")
   s.add_dependency("sinatra")
   s.add_dependency("daemons")
+  s.add_dependency("json")
 
   # If your tests use any gems, include them here
   s.add_development_dependency("rspec")

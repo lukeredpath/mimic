@@ -3,19 +3,23 @@ require 'rest_client'
 class HttpClient
   attr_reader :last_response
   
+  def self.use_proxy(proxy)
+    RestClient.proxy = proxy
+  end
+  
   def initialize
     @last_response = nil
   end
   
   def perform_request(url, method, payload = nil, options={})
-    if method.downcase =~ /(POST|PUT)/
-      RestClient.send(method.downcase, url, payload, options) do |response, request|
-        @last_response = response
-      end
-    else
-      RestClient.send(method.downcase, url, options) do |response, request|
-        @last_response = response
-      end
+    RestClient.send(method.downcase, url, options) do |response, request|
+      @last_response = response
+    end
+  end
+  
+  def perform_request_with_payload(url, method, payload, options={})
+    RestClient.send(method.downcase, url, payload, options) do |response, request|
+      @last_response = response
     end
   end
   

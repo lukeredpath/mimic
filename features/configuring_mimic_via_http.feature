@@ -15,8 +15,9 @@ Feature: Configuring Mimic via an HTTP interface
     Given that Mimic is daemonized and accepting remote configuration on "/api"
     When I make an HTTP POST request to "http://localhost:11988/api/get" with the payload:
       """
-        {'path': '/anything'}
+        {"path": "/anything"}
       """
-    When I make an HTTP GET request to "http://localhost:11988/anything"
+    Then I should receive an HTTP 201 response
+    And I make an HTTP GET request to "http://localhost:11988/anything"
     Then I should receive an HTTP 200 response with an empty body
     

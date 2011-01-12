@@ -3,6 +3,7 @@ PATH
   specs:
     mimic (0.3.0)
       daemons
+      json
       rack
       sinatra
 
@@ -45,6 +46,7 @@ PLATFORMS
 DEPENDENCIES
   cucumber
   daemons
+  json
   mimic!
   mocha
   rack

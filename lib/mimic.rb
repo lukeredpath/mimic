@@ -16,7 +16,7 @@ module Mimic
   def self.mimic(options = {}, &block)
     options = MIMIC_DEFAULT_OPTIONS.merge(options)
     
-    FakeHost.new(options[:hostname]).tap do |host|
+    FakeHost.new(options[:hostname], options[:remote_configuration_path]).tap do |host|
       host.instance_eval(&block) if block_given?
       Server.instance.serve(host, options[:port])
     end
@@ -39,7 +39,7 @@ module Mimic
 
     def serve(host_app, port)
       @thread = Thread.fork do
-        Rack::Handler::WEBrick.run(host_app, 
+        Rack::Handler::WEBrick.run(host_app.url_map, 
           :Port      => port, 
           :Logger    => logger, 
           :AccessLog => logger

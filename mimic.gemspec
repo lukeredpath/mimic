@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.date = %q{2011-01-12}
   s.email = %q{luke@lukeredpath.co.uk}
   s.extra_rdoc_files = ["README.md"]
-  s.files = ["LICENSE", "Rakefile", "README.md", "spec", "lib/mimic", "lib/mimic/fake_host.rb", "lib/mimic.rb"]
+  s.files = ["LICENSE", "Rakefile", "README.md", "spec", "lib/mimic", "lib/mimic/api.rb", "lib/mimic/fake_host.rb", "lib/mimic.rb"]
   s.homepage = %q{http://lukeredpath.co.uk}
   s.rdoc_options = ["--main", "README.md"]
   s.require_paths = ["lib"]
@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<rack>, [">= 0"])
       s.add_runtime_dependency(%q<sinatra>, [">= 0"])
       s.add_runtime_dependency(%q<daemons>, [">= 0"])
+      s.add_runtime_dependency(%q<json>, [">= 0"])
       s.add_development_dependency(%q<rspec>, [">= 0"])
       s.add_development_dependency(%q<cucumber>, [">= 0"])
       s.add_development_dependency(%q<mocha>, [">= 0"])
@@ -30,6 +31,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rack>, [">= 0"])
       s.add_dependency(%q<sinatra>, [">= 0"])
       s.add_dependency(%q<daemons>, [">= 0"])
+      s.add_dependency(%q<json>, [">= 0"])
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<cucumber>, [">= 0"])
       s.add_dependency(%q<mocha>, [">= 0"])
@@ -38,6 +40,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rack>, [">= 0"])
     s.add_dependency(%q<sinatra>, [">= 0"])
     s.add_dependency(%q<daemons>, [">= 0"])
+    s.add_dependency(%q<json>, [">= 0"])
     s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<cucumber>, [">= 0"])
     s.add_dependency(%q<mocha>, [">= 0"])
