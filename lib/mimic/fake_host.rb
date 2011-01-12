@@ -47,6 +47,12 @@ module Mimic
       @app.send(method, *args, &block)
     end
     
+    def evaluate_file(path)
+      if File.exists?(path)
+        instance_eval(File.read(path))
+      end
+    end
+    
     private
     
     def request(method, path, &block)
