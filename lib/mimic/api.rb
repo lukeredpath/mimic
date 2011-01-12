@@ -12,10 +12,12 @@ module Mimic
     
     before { content_type(:json) }
     
-    post "/get" do
-      data = JSON.parse(request.body.string)
-      host.get(data['path'])
-      [201, {}, host.inspect]
+    %w{get post put delete head}.each do |verb|
+      post "/#{verb}" do
+        data = JSON.parse(request.body.string)
+        host.send(verb, data['path'])
+        [201, {}, data.inspect]
+      end
     end
   end
 end

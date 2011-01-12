@@ -11,7 +11,7 @@ Feature: Configuring Mimic via an HTTP interface
     When I make an HTTP GET request to "http://localhost:11988/anything"
     Then I should receive an HTTP 404 response with an empty body
     
-  Scenario: Stubbing a path using the HTTP API
+  Scenario: Stubbing a request path via GET using the HTTP API
     Given that Mimic is daemonized and accepting remote configuration on "/api"
     When I make an HTTP POST request to "http://localhost:11988/api/get" with the payload:
       """
@@ -21,3 +21,42 @@ Feature: Configuring Mimic via an HTTP interface
     And I make an HTTP GET request to "http://localhost:11988/anything"
     Then I should receive an HTTP 200 response with an empty body
     
+  Scenario: Stubbing a request path via POST the HTTP API for a
+    Given that Mimic is daemonized and accepting remote configuration on "/api"
+    When I make an HTTP POST request to "http://localhost:11988/api/post" with the payload:
+      """
+        {"path": "/anything"}
+      """
+    Then I should receive an HTTP 201 response
+    And I make an HTTP POST request to "http://localhost:11988/anything"
+    Then I should receive an HTTP 200 response with an empty body
+  
+  Scenario: Stubbing a request path via PUT using the HTTP API
+    Given that Mimic is daemonized and accepting remote configuration on "/api"
+    When I make an HTTP POST request to "http://localhost:11988/api/get" with the payload:
+      """
+        {"path": "/anything"}
+      """
+    Then I should receive an HTTP 201 response
+    And I make an HTTP GET request to "http://localhost:11988/anything"
+    Then I should receive an HTTP 200 response with an empty body
+
+  Scenario: Stubbing a request path via DELETE the HTTP API for a
+    Given that Mimic is daemonized and accepting remote configuration on "/api"
+    When I make an HTTP POST request to "http://localhost:11988/api/post" with the payload:
+      """
+        {"path": "/anything"}
+      """
+    Then I should receive an HTTP 201 response
+    And I make an HTTP POST request to "http://localhost:11988/anything"
+    Then I should receive an HTTP 200 response with an empty body
+    
+  Scenario: Stubbing a request path via DELETE using the HTTP API
+    Given that Mimic is daemonized and accepting remote configuration on "/api"
+    When I make an HTTP POST request to "http://localhost:11988/api/get" with the payload:
+      """
+        {"path": "/anything"}
+      """
+    Then I should receive an HTTP 201 response
+    And I make an HTTP GET request to "http://localhost:11988/anything"
+    Then I should receive an HTTP 200 response with an empty body

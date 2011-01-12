@@ -23,11 +23,12 @@ module Mimic
   end
   
   def self.daemonize(options = {}, daemon_options = {})
-    Daemons.run_proc('mimic', daemon_options) { mimic(options) }
+    @daemon = Daemons.run_proc('mimic', daemon_options) { mimic(options) }
   end
   
   def self.cleanup!
     Mimic::Server.instance.shutdown
+    @daemon.zap_all
   end
 
   class Server
