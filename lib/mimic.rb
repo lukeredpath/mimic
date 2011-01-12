@@ -2,17 +2,28 @@ require 'mimic/fake_host'
 require 'singleton'
 require 'rack'
 require 'logger'
+require 'daemons'
 
 module Mimic
   MIMIC_DEFAULT_PORT = 11988
+
+  MIMIC_DEFAULT_OPTIONS = {
+    :hostname => 'localhost', 
+    :port => MIMIC_DEFAULT_PORT,
+    :remote_configuration_path => nil
+  }
   
   def self.mimic(options = {}, &block)
-    options = {:hostname => 'localhost', :port => MIMIC_DEFAULT_PORT}.merge(options)
+    options = MIMIC_DEFAULT_OPTIONS.merge(options)
     
     FakeHost.new(options[:hostname]).tap do |host|
       host.instance_eval(&block) if block_given?
       Server.instance.serve(host, options[:port])
     end
+  end
+  
+  def self.daemonize(options = {}, daemon_options = {})
+    Daemons.run_proc('mimic', daemon_options) { mimic(options) }
   end
   
   def self.cleanup!

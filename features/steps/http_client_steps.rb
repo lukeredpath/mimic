@@ -2,6 +2,10 @@ Before do
   @httpclient = HttpClient.new
 end
 
+When /^I make an HTTP (POST|PUT) request to "([^\"]*)" with the payload:$/ do |http_method, url, payload|
+  @httpclient.perform_request(url, http_method, payload)
+end
+
 When /^I make an HTTP (GET|POST|PUT|DELETE|HEAD) request to "([^\"]*)"$/ do |http_method, url|
   @httpclient.perform_request(url, http_method)
 end
