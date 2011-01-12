@@ -33,32 +33,32 @@ Feature: Configuring Mimic via an HTTP interface
   
   Scenario: Stubbing a request path via PUT using the HTTP API
     Given that Mimic is daemonized and accepting remote configuration on "/api"
-    When I make an HTTP POST request to "http://localhost:11988/api/get" with the payload:
+    When I make an HTTP POST request to "http://localhost:11988/api/put" with the payload:
       """
         {"path": "/anything"}
       """
     Then I should receive an HTTP 201 response
-    And I make an HTTP GET request to "http://localhost:11988/anything"
+    And I make an HTTP PUT request to "http://localhost:11988/anything"
     Then I should receive an HTTP 200 response with an empty body
 
   Scenario: Stubbing a request path via DELETE the HTTP API for a
     Given that Mimic is daemonized and accepting remote configuration on "/api"
-    When I make an HTTP POST request to "http://localhost:11988/api/post" with the payload:
+    When I make an HTTP POST request to "http://localhost:11988/api/delete" with the payload:
       """
         {"path": "/anything"}
       """
     Then I should receive an HTTP 201 response
-    And I make an HTTP POST request to "http://localhost:11988/anything"
+    And I make an HTTP DELETE request to "http://localhost:11988/anything"
     Then I should receive an HTTP 200 response with an empty body
     
-  Scenario: Stubbing a request path via DELETE using the HTTP API
+  Scenario: Stubbing a request path via HEAD using the HTTP API
     Given that Mimic is daemonized and accepting remote configuration on "/api"
-    When I make an HTTP POST request to "http://localhost:11988/api/get" with the payload:
+    When I make an HTTP POST request to "http://localhost:11988/api/head" with the payload:
       """
         {"path": "/anything"}
       """
     Then I should receive an HTTP 201 response
-    And I make an HTTP GET request to "http://localhost:11988/anything"
+    And I make an HTTP HEAD request to "http://localhost:11988/anything"
     Then I should receive an HTTP 200 response with an empty body
 
   Scenario: Stubbing a request path to return a custom response body
