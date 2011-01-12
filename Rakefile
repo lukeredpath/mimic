@@ -46,6 +46,7 @@ spec = Gem::Specification.new do |s|
   # relevant versions
   s.add_dependency("rack")
   s.add_dependency("sinatra")
+  s.add_dependency("daemons")
 
   # If your tests use any gems, include them here
   s.add_development_dependency("rspec")
@@ -87,4 +88,9 @@ end
 task 'Release if all specs pass'
 task :release => [:specs, :features, :package] do
   system("gem push pkg/#{spec.name}-#{spec.version}.gem")
+end
+
+desc 'Install all gem dependencies'
+task :bundle => :gemspec do
+  system("bundle")
 end
