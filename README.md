@@ -46,6 +46,37 @@ Finally, because Mimic is built on top of Sinatra for the core request handling,
       end
     end
 
+## Using Mimic with non-Ruby processes
+
+Mimic has a built-in REST API that lets you configure your request stubs over HTTP. This makes it possible to use Mimic from other processes that can perform HTTP requests.
+
+First of all, you'll need to run Mimic as a daemon. You can do this with a simple Ruby script:
+
+    #!/usr/bin/env ruby
+    Mimic.daemonize({:port => 11988, :remote_configuration_path => '/api'})
+    
+Give the script executable permissions and then start it:
+
+    $ your_mimic_script.rb start (or run)
+    
+The remote configuration path is where the API endpoints will be mounted - this is configurable as you will not be able this path or any paths below it in your stubs, so choose one that doesn't conflict with the paths you need to stub.
+
+The API supports both JSON and Plist payloads, defaulting to JSON. Set the request Content-Type header to application/plist for Plist requests.
+
+For the following Mimic configuration (using the Ruby DSL):
+
+    Mimic.mimic.get("/some/path").returning("hello world")
+    
+The equivalent stub can be configured using the REST API as follows:
+
+    $ curl -d'{"path":"/some/path", "body":"hello world"}' http://localhost:11988/api/get
+    
+Likewise, a POST request to the same path could be stubbed like so:
+
+    $ curl -d'{"path":"/some/path", "body":"hello world"}' http://localhost:11988/api/post
+
+The end-point of the API is the HTTP verb you are stubbing, the path, response body, code and headers are specified in the POST data (a hash in JSON or Plist format). See the HTTP API Cucumber features for more examples.
+
 ## Contributors
 
 * [James Fairbairn](http://github.com/jfairbairn)
