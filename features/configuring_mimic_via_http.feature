@@ -107,3 +107,28 @@ Feature: Configuring Mimic via an HTTP interface
     Then I should receive an HTTP 201 response
     And I make an HTTP GET request to "http://localhost:11988/anything"
     Then I should receive an HTTP 200 response with an empty body
+    
+  Scenario: Configuring multiple stubs for a single verb in a single request
+    Given that Mimic is daemonized and accepting remote configuration on "/api"
+    When I make an HTTP POST request to "http://localhost:11988/api/get" with the payload:
+      """
+        {"stubs":[{"path": "/anything"}, {"path": "/something"}]}
+      """
+    Then I should receive an HTTP 201 response
+    And I make an HTTP GET request to "http://localhost:11988/anything"
+    Then I should receive an HTTP 200 response with an empty body
+    And I make an HTTP GET request to "http://localhost:11988/something"
+    Then I should receive an HTTP 200 response with an empty body
+    
+  Scenario: Configuring multiple stubs for different verbs in a single request
+    Given that Mimic is daemonized and accepting remote configuration on "/api"
+    When I make an HTTP POST request to "http://localhost:11988/api/multi" with the payload:
+      """
+        {"stubs":[{"method": "GET", "path": "/anything"}, {"method": "POST", "path": "/something"}]}
+      """
+    Then I should receive an HTTP 201 response
+    And I make an HTTP GET request to "http://localhost:11988/anything"
+    Then I should receive an HTTP 200 response with an empty body
+    And I make an HTTP POST request to "http://localhost:11988/something"
+    Then I should receive an HTTP 200 response with an empty body
+    

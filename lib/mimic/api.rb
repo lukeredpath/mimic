@@ -23,9 +23,32 @@ module Mimic
           else
             data = JSON.parse(request.body.string)
         end
-        host.send(verb, data['path']).returning(data['body'] || '', data['code'] || 200, data['headers'] || {})
+        stubs_from_request(data).each do |x|
+          host.send(verb, x['path']).returning(x['body'] || '', x['code'] || 200, x['headers'] || {})
+        end
         [201, {}, data.inspect]
       end
+      
+      post "/multi" do
+        case request.content_type
+          when /json/
+            data = JSON.parse(request.body.string)
+          when /plist/
+            data = Plist.parse_xml(request.body.string)
+          else
+            data = JSON.parse(request.body.string)
+        end
+        stubs_from_request(data).each do |x|
+          host.send((x['method'] || "get").downcase, x['path']).returning(x['body'] || '', x['code'] || 200, x['headers'] || {})
+        end
+        [201, {}, data.inspect]
+      end
+    end
+    
+    private
+    
+    def stubs_from_request(data)
+      data["stubs"] ? data["stubs"] : [data]
     end
   end
 end
