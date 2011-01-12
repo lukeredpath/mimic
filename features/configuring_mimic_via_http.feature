@@ -1,25 +1,7 @@
 Feature: Configuring Mimic via an HTTP interface
   In order to use Mimic stubs from non-Ruby test cases
   As a developer
-  I want to be able to configure Mimic to run in the background and configure it using HTTP/REST
-  
-  Scenario: Starting Mimic in the background with no pre-configured stubs
-    Given I execute the script:
-      """
-      Mimic.daemonize({:port => 11988, :remote_configuration_path => '/api'}, :ARGV => ['run'])
-      """
-    When I make an HTTP GET request to "http://localhost:11988/anything"
-    Then I should receive an HTTP 404 response with an empty body
-    
-  Scenario: Starting Mimic in the background with pre-configured stubs
-    Given I execute the script:
-      """
-      Mimic.daemonize({:port => 11988, :remote_configuration_path => '/api'}, :ARGV => ['run']) do
-        get("/preconfigured").returning("test response")
-      end
-      """
-    When I make an HTTP GET request to "http://localhost:11988/preconfigured"
-    Then I should receive an HTTP 200 response with a body matching "test response"
+  I want to be able to configure a background Mimic process using an HTTP REST API
     
   Scenario: Stubbing a request path via GET using the HTTP API
     Given that Mimic is daemonized and accepting remote configuration on "/api"
