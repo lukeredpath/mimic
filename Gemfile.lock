@@ -54,5 +54,5 @@ DEPENDENCIES
   mocha
   rack
   rest-client
-  rspec
+  rspec (~> 2.4.0)
   sinatra

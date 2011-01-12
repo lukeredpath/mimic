@@ -54,9 +54,9 @@ describe "Mimic::FakeHost" do
       "rack.errors"    => StringIO.new,
       "rack.input"     => StringIO.new }
   end
- 
-  def return_rack_response(code, headers, body)
-    simple_matcher "return rack response" do |actual|
+  
+  RSpec::Matchers.define :return_rack_response do |code, headers, body|
+    match do |actual|
       (actual[0].should == code) &&
       (actual[1].should include(headers)) &&
       (actual[2].should include(body))

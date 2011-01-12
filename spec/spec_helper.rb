@@ -1,9 +1,10 @@
 require 'rubygems'
-require 'spec'
+require 'rspec'
 require 'mocha'
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), *%w[.. lib]))
 require 'mimic'
+require 'rspec/expectations'
 
-Spec::Runner.configure do |config|
+Rspec.configure do |config|
   config.mock_with :mocha
 end

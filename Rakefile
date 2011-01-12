@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'cucumber'
 require 'cucumber/rake/task'
-require 'spec/rake/spectask'
+require 'rspec/core/rake_task'
 
 desc "Run all Cucumber features"
 Cucumber::Rake::Task.new(:features) do |t|
@@ -9,12 +9,11 @@ Cucumber::Rake::Task.new(:features) do |t|
 end
 
 desc "Run all specs"
-Spec::Rake::SpecTask.new('specs') do |t|
-  t.spec_files = FileList['spec/**/*.rb']
+RSpec::Core::RakeTask.new(:spec) do |t|
 end
 
-task :default => :specs
-task :all => [:specs, :features]
+task :default => :spec
+task :all => [:spec, :features]
 
 require "rake/gempackagetask"
 require "rake/rdoctask"
@@ -50,7 +49,7 @@ spec = Gem::Specification.new do |s|
   s.add_dependency("json")
 
   # If your tests use any gems, include them here
-  s.add_development_dependency("rspec")
+  s.add_development_dependency("rspec", "~> 2.4.0")
   s.add_development_dependency("cucumber")
   s.add_development_dependency("mocha")
   s.add_development_dependency("rest-client")
