@@ -11,7 +11,6 @@ module Mimic
     :hostname => 'localhost',
     :port => MIMIC_DEFAULT_PORT,
     :remote_configuration_path => nil,
-    :stub_file => nil,
     :fork => true
   }
 
@@ -20,9 +19,6 @@ module Mimic
 
     FakeHost.new(options[:hostname], options[:remote_configuration_path]).tap do |host|
       host.instance_eval(&block) if block_given?
-      if options[:stub_file]
-        host.evaluate_file(options[:stub_file])
-      end
       Server.instance.serve(host, options[:port], options[:fork])
     end
   end

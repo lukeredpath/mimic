@@ -38,6 +38,12 @@ module Mimic
       request("HEAD", path, &block)
     end
     
+    def import(path)
+      if File.exists?(path)
+        instance_eval(File.read(path))
+      end
+    end
+    
     def call(env)
       @stubs.each(&:build)
       @app.call(env)
@@ -45,12 +51,6 @@ module Mimic
     
     def method_missing(method, *args, &block)
       @app.send(method, *args, &block)
-    end
-    
-    def evaluate_file(path)
-      if File.exists?(path)
-        instance_eval(File.read(path))
-      end
     end
     
     private
