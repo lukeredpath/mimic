@@ -17,12 +17,17 @@ module Mimic
         api_request.setup_stubs_on(host)
         [201, {}, api_request.to_s]
       end
-      
-      post "/multi" do
-        api_request = APIRequest.from_request(request)
-        api_request.setup_stubs_on(host)
-        [201, {}, api_request.to_s]
-      end
+    end
+    
+    post "/multi" do
+      api_request = APIRequest.from_request(request)
+      api_request.setup_stubs_on(host)
+      [201, {}, api_request.to_s]
+    end
+    
+    post "/clear" do
+      self.host.clear
+      [200, {}, ""]
     end
     
     private

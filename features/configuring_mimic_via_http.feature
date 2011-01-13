@@ -13,7 +13,7 @@ Feature: Configuring Mimic via an HTTP interface
     And I make an HTTP GET request to "http://localhost:11988/anything"
     Then I should receive an HTTP 200 response with an empty body
     
-  Scenario: Stubbing a request path via POST the HTTP API for a
+  Scenario: Stubbing a request path via POST the HTTP API
     Given that Mimic is running and accepting remote configuration on "/api"
     When I make an HTTP POST request to "http://localhost:11988/api/post" with the payload:
       """
@@ -123,4 +123,13 @@ Feature: Configuring Mimic via an HTTP interface
     Then I should receive an HTTP 200 response with an empty body
     And I make an HTTP POST request to "http://localhost:11988/something"
     Then I should receive an HTTP 200 response with an empty body
+    
+  Scenario: Clearing all stubs via the HTTP API
+    Given that Mimic is running and accepting remote configuration on "/api" with the existing stubs:
+      """
+        get("/anything").returning("hello world")
+      """
+    When I make an HTTP POST request to "http://localhost:11988/api/clear"
+    And I make an HTTP GET request to "http://localhost:11988/anything"
+    Then I should receive an HTTP 404 response with an empty body
     
