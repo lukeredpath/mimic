@@ -1,7 +1,3 @@
-Given /^I execute the script:$/ do |script|
-  eval(script)
-end
-
 TEMP_FILES = []
 
 Given /^the file "([^\"]*)" exists with the contents:$/ do |file_path, string|
