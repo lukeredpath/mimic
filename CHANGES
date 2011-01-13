@@ -2,6 +2,7 @@
 
 * Mimic can now be run in it's own process and configured externally using a REST API.
 * Mimic can be run using the Daemons gem safely (pass :fork => false to disable built-in forking).
+* All existing stubs can be cleared.
 
 ## 0.3.0
 
