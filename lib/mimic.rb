@@ -8,35 +8,27 @@ module Mimic
   MIMIC_DEFAULT_PORT = 11988
 
   MIMIC_DEFAULT_OPTIONS = {
-    :hostname => 'localhost', 
+    :hostname => 'localhost',
     :port => MIMIC_DEFAULT_PORT,
     :remote_configuration_path => nil,
-    :stub_file => nil
+    :stub_file => nil,
+    :fork => true
   }
-  
+
   def self.mimic(options = {}, &block)
     options = MIMIC_DEFAULT_OPTIONS.merge(options)
-    
+
     FakeHost.new(options[:hostname], options[:remote_configuration_path]).tap do |host|
       host.instance_eval(&block) if block_given?
       if options[:stub_file]
         host.evaluate_file(options[:stub_file])
       end
-      Server.instance.serve(host, options[:port])
+      Server.instance.serve(host, options[:port], options[:fork])
     end
   end
-  
-  def self.daemonize(options = {}, daemon_options = {}, &block)
-    @daemon = Daemons.run_proc('mimic', daemon_options) { mimic(options, &block) }
-  end
-  
+
   def self.cleanup!
     Mimic::Server.instance.shutdown
-
-    if @daemon
-      @daemon.zap_all
-      @daemon = nil
-    end
   end
 
   class Server
@@ -46,28 +38,40 @@ module Mimic
       @logger ||= Logger.new(StringIO.new)
     end
 
-    def serve(host_app, port)
-      @thread = Thread.fork do
-        Rack::Handler::WEBrick.run(host_app.url_map, 
-          :Port      => port, 
-          :Logger    => logger, 
-          :AccessLog => logger
-          
-        ) { |server| @server = server }
+    def serve(host_app, port, should_fork)
+      if should_fork
+        @thread = Thread.fork do
+          start_service(host_app, port)
+        end
+
+        wait_for_service(host_app.hostname, port)
+        
+      else
+        start_service(host_app, port)
       end
-      
-      wait_for_service(host_app.hostname, port)
     end
-    
+
+    def start_service(host_app, port)
+      Rack::Handler::WEBrick.run(host_app.url_map, {
+        :Port       => port,
+        :Logger     => logger,
+        :AccessLog  => logger,
+
+      }) do |server|
+        @server = server
+
+        trap("TERM") { @server.shutdown }
+        trap("INT")  { @server.shutdown }
+      end
+    end
+
     def shutdown
-      if @thread
-        Thread.kill(@thread) 
-        @server.shutdown
-      end
+      Thread.kill(@thread) if @thread
+      @server.shutdown if @server
     end
-    
+
     # courtesy of http://is.gd/eoYho
-    
+
     def listening?(host, port)
       begin
         socket = TCPSocket.new(host, port)
