@@ -6,5 +6,5 @@ Given /^the file "([^\"]*)" exists with the contents:$/ do |file_path, string|
 end
 
 After do
-  TEMP_FILES.each { |path| FileUtils.rm(path) }
+  TEMP_FILES.each { |path| FileUtils.rm(path) if File.exist?(path) }
 end
