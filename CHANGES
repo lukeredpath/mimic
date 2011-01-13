@@ -1,0 +1,18 @@
+## 0.4.0
+
+* Mimic can now be run in it's own process and configured externally using a REST API.
+* Mimic can be run using the Daemons gem safely (pass :fork => false to disable built-in forking).
+
+## 0.3.0
+
+* All verb methods (get, post etc.) can take blocks
+
+## 0.2.0
+
+* Added support for using Rack middleware
+* Removed host file modification feature
+* Refactor code top build on top of Sinatra::Base
+
+## 0.1.0
+
+* Initial release
