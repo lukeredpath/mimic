@@ -87,7 +87,7 @@ task :clean => [:clobber_rdoc, :clobber_package] do
 end
 
 task 'Release if all specs pass'
-task :release => [:specs, :features, :package] do
+task :release => [:clean, :bundle, :spec, :features, :package] do
   system("gem push pkg/#{spec.name}-#{spec.version}.gem")
 end
 
