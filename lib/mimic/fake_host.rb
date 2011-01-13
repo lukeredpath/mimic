@@ -53,6 +53,10 @@ module Mimic
       @stubs.clear
     end
     
+    def inspect
+      @stubs.inspect
+    end
+    
     private
     
     def method_missing(method, *args, &block)

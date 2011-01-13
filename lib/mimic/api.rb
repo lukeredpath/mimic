@@ -26,8 +26,9 @@ module Mimic
     end
     
     post "/clear" do
+      response_body = self.host.inspect
       self.host.clear
-      [200, {}, ""]
+      [200, {}, "Cleared stubs: #{response_body}"]
     end
     
     private
