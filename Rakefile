@@ -27,7 +27,7 @@ spec = Gem::Specification.new do |s|
 
   # Change these as appropriate
   s.name              = "mimic"
-  s.version           = "0.3.0"
+  s.version           = "0.4.0"
   s.summary           = "A Ruby gem for faking external web services for testing"
   s.authors           = "Luke Redpath"
   s.email             = "luke@lukeredpath.co.uk"
@@ -38,7 +38,7 @@ spec = Gem::Specification.new do |s|
   s.rdoc_options      = %w(--main README.md)
 
   # Add any extra files to include in the gem
-  s.files             = %w(LICENSE Rakefile README.md) + Dir.glob("{spec,lib/**/*}")
+  s.files             = %w(LICENSE CHANGES Rakefile README.md) + Dir.glob("{spec,lib/**/*}")
   s.require_paths     = ["lib"]
 
   # If you want to depend on other gems, add them here, along with any
