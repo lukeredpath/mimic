@@ -7,14 +7,8 @@ module Mimic
     
     def initialize(hostname, remote_configuration_path = nil)
       @hostname = hostname
-      @stubs = []
-      @app = Class.new(Sinatra::Base)
       @remote_configuration_path = remote_configuration_path
-
-      @app.not_found do
-        [404, {}, ""]
-      end
-      
+      clear      
       build_url_map!
     end
     
@@ -50,7 +44,11 @@ module Mimic
     end
     
     def clear
-      @stubs.clear
+      @stubs = []
+      @app = Class.new(Sinatra::Base)
+      @app.not_found do
+        [404, {}, ""]
+      end
     end
     
     def inspect

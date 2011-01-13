@@ -132,4 +132,17 @@ Feature: Configuring Mimic via an HTTP interface
     When I make an HTTP POST request to "http://localhost:11988/api/clear"
     And I make an HTTP GET request to "http://localhost:11988/anything"
     Then I should receive an HTTP 404 response with an empty body
+
+  Scenario: Clearing all stubs then resetting a stub via the API
+    Given that Mimic is running and accepting remote configuration on "/api" with the existing stubs:
+      """
+        get("/anything").returning("hello world")
+      """
+    When I make an HTTP POST request to "http://localhost:11988/api/clear"
+    When I make an HTTP POST request to "http://localhost:11988/api/get" with the payload:
+      """
+        {"path": "/anything", "body": "something else"}
+      """
+    And I make an HTTP GET request to "http://localhost:11988/anything"
+    Then I should receive an HTTP 200 response with a body matching "something else"
     

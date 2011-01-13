@@ -47,6 +47,7 @@ describe "Mimic::FakeHost" do
   
   it "should allow stubs to be cleared" do
     @host.get("/some/path")
+    @host.call(request_for("/some/path")).should match_rack_response(200, {}, "")
     @host.clear
     @host.call(request_for("/some/path")).should match_rack_response(404, {}, "")
   end
