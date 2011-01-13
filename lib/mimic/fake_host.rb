@@ -49,11 +49,15 @@ module Mimic
       @app.call(env)
     end
     
-    def method_missing(method, *args, &block)
-      @app.send(method, *args, &block)
+    def clear
+      @stubs.clear
     end
     
     private
+    
+    def method_missing(method, *args, &block)
+      @app.send(method, *args, &block)
+    end
     
     def request(method, path, &block)
       if block_given?

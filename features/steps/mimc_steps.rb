@@ -6,6 +6,10 @@ Given /^that Mimic is running and accepting remote configuration on "([^\"]*)"$/
   Mimic.mimic(:port => 11988, :remote_configuration_path => api_endpoint)
 end
 
+When /^I evaluate the code:$/ do |string|
+  eval(string)
+end
+
 After do
   Mimic.cleanup!
 end

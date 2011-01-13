@@ -45,6 +45,12 @@ describe "Mimic::FakeHost" do
     @host.call(request_for("/some/path", :method => "GET")).should match_rack_response(200, {'Content-Type' => 'text/plain;charset=utf-8'}, 'bobby')
   end
   
+  it "should allow stubs to be cleared" do
+    @host.get("/some/path")
+    @host.clear
+    @host.call(request_for("/some/path")).should match_rack_response(404, {}, "")
+  end
+  
   private
   
   def request_for(path, options={})
