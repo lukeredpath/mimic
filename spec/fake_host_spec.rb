@@ -52,6 +52,23 @@ describe "Mimic::FakeHost" do
     @host.call(request_for("/some/path")).should match_rack_response(404, {}, "")
   end
   
+  it "should allow stubs to be imported from a file" do
+    @host.import(File.join(File.dirname(__FILE__), *%w[fixtures import_stubs.mimic]))
+    @host.call(request_for("/imported/path")).should match_rack_response(200, {}, "")
+  end
+  
+  it "should not clear imported stubs" do
+    @host.import(File.join(File.dirname(__FILE__), *%w[fixtures import_stubs.mimic]))
+    @host.clear
+    @host.call(request_for("/imported/path")).should match_rack_response(200, {}, "")
+  end
+  
+  it "should raise if import file does not exist" do
+    proc { 
+      @host.import(File.join(File.dirname(__FILE__), *%w[fixtures doesnt_exist.mimic]))
+    }.should raise_error
+  end
+  
   private
   
   def request_for(path, options={})

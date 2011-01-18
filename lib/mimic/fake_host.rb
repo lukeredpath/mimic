@@ -37,6 +37,8 @@ module Mimic
       if File.exists?(path)
         @imports << path unless @imports.include?(path)
         instance_eval(File.read(path))
+      else
+        raise "Could not locate file for stub import: #{path}"
       end
     end
     
