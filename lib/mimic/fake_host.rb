@@ -105,6 +105,10 @@ module Mimic
         end
       end
       
+      def echo_request!(format = :json)
+        @echo_request_format = format
+      end
+      
       def matches?(request)
         if @params.any?
           request.params == @params
@@ -122,12 +126,32 @@ module Mimic
       end
       
       def response_for_request(request)
+        extract_echo_from_request(request) if @echo_request_format
         matches?(request) ? matched_response : unmatched_response
       end
       
       def build
         stub = self
         @app.send(@method.downcase, @path) { stub.response_for_request(request) }
+      end
+      
+      def extract_echo_from_request(request)
+        echo = {"echo" => {
+          "params" => request.params,
+          "env"    => env_without_rack_env(request.env)
+        }}        
+        case @echo_request_format
+        when :json
+          @body = echo.to_json
+        when :plist
+          @body = echo.to_plist
+        when :text
+          @body = echo.inspect
+        end
+      end
+      
+      def env_without_rack_env(env)
+        Hash[*env.select { |key, value| key !~ /^rack/i }.flatten]
       end
     end
   end

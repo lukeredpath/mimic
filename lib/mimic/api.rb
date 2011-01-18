@@ -72,7 +72,13 @@ module Mimic
         end
         
         def on(host)
-          host.send(@method.downcase.to_sym, path).returning(body, code, headers).with_query_parameters(params)
+          stub = host.send(@method.downcase.to_sym, path).returning(body, code, headers)
+          stub.with_query_parameters(params)
+          stub.echo_request!(echo_format)
+        end
+        
+        def echo_format
+          @data['echo'].to_sym rescue nil
         end
 
         def path

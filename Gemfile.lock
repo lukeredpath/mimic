@@ -20,6 +20,7 @@ GEM
     diff-lcs (1.1.2)
     gherkin (2.3.3)
       json (~> 1.4.6)
+    hashie (0.4.0)
     json (1.4.6)
     mime-types (1.16)
     mocha (0.9.10)
@@ -41,13 +42,14 @@ GEM
       rack (~> 1.1)
       tilt (~> 1.2)
     term-ansicolor (1.0.5)
-    tilt (1.2.1)
+    tilt (1.2.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   cucumber
+  hashie
   json
   mimic!
   mocha

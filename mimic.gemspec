@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Luke Redpath"]
-  s.date = %q{2011-01-13}
+  s.date = %q{2011-01-18}
   s.email = %q{luke@lukeredpath.co.uk}
   s.extra_rdoc_files = ["README.md"]
   s.files = ["LICENSE", "CHANGES", "Rakefile", "README.md", "spec", "lib/mimic", "lib/mimic/api.rb", "lib/mimic/fake_host.rb", "lib/mimic.rb"]
@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<cucumber>, [">= 0"])
       s.add_development_dependency(%q<mocha>, [">= 0"])
       s.add_development_dependency(%q<rest-client>, [">= 0"])
+      s.add_development_dependency(%q<hashie>, [">= 0"])
     else
       s.add_dependency(%q<rack>, [">= 0"])
       s.add_dependency(%q<sinatra>, [">= 0"])
@@ -37,6 +38,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<cucumber>, [">= 0"])
       s.add_dependency(%q<mocha>, [">= 0"])
       s.add_dependency(%q<rest-client>, [">= 0"])
+      s.add_dependency(%q<hashie>, [">= 0"])
     end
   else
     s.add_dependency(%q<rack>, [">= 0"])
@@ -47,5 +49,6 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<cucumber>, [">= 0"])
     s.add_dependency(%q<mocha>, [">= 0"])
     s.add_dependency(%q<rest-client>, [">= 0"])
+    s.add_dependency(%q<hashie>, [">= 0"])
   end
 end
