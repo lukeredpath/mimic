@@ -5,7 +5,7 @@ Feature: Configuring Mimic via an HTTP interface
   
   Scenario: Pinging Mimic via the API to check it's running
     Given that Mimic is running and accepting remote configuration on "/api"
-    When I make an HTTP POST request to "http://localhost:11988/api/ping"
+    When I make an HTTP GET request to "http://localhost:11988/api/ping"
     Then I should receive an HTTP 200 response with a body matching "OK"
     
   Scenario: Stubbing a request path via GET using the HTTP API
