@@ -31,6 +31,10 @@ module Mimic
       [200, {}, "Cleared stubs: #{response_body}"]
     end
     
+    post "/ping" do
+      [200, {}, "OK"]
+    end
+    
     private
     
     class APIRequest

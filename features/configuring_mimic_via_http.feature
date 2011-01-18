@@ -2,6 +2,11 @@ Feature: Configuring Mimic via an HTTP interface
   In order to use Mimic stubs from non-Ruby test cases
   As a developer
   I want to be able to configure a background Mimic process using an HTTP REST API
+  
+  Scenario: Pinging Mimic via the API to check it's running
+    Given that Mimic is running and accepting remote configuration on "/api"
+    When I make an HTTP POST request to "http://localhost:11988/api/ping"
+    Then I should receive an HTTP 200 response with a body matching "OK"
     
   Scenario: Stubbing a request path via GET using the HTTP API
     Given that Mimic is running and accepting remote configuration on "/api"
