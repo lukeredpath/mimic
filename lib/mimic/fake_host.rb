@@ -8,6 +8,7 @@ module Mimic
     def initialize(hostname, remote_configuration_path = nil)
       @hostname = hostname
       @remote_configuration_path = remote_configuration_path
+      @imports = []
       clear      
       build_url_map!
     end
@@ -32,8 +33,9 @@ module Mimic
       request("HEAD", path, &block)
     end
     
-    def import(path)
+    def import(path, replay = false)
       if File.exists?(path)
+        @imports << path unless replay
         instance_eval(File.read(path))
       end
     end
@@ -49,6 +51,7 @@ module Mimic
       @app.not_found do
         [404, {}, ""]
       end
+      @imports.each { |file| import(file, true) }
     end
     
     def inspect
