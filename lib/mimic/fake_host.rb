@@ -33,9 +33,9 @@ module Mimic
       request("HEAD", path, &block)
     end
     
-    def import(path, replay = false)
+    def import(path)
       if File.exists?(path)
-        @imports << path unless replay
+        @imports << path unless @imports.include?(path)
         instance_eval(File.read(path))
       end
     end
@@ -51,7 +51,7 @@ module Mimic
       @app.not_found do
         [404, {}, ""]
       end
-      @imports.each { |file| import(file, true) }
+      @imports.each { |file| import(file) }
     end
     
     def inspect
