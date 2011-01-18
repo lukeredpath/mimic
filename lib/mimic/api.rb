@@ -35,6 +35,10 @@ module Mimic
       [200, {}, "OK"]
     end
     
+    get "/debug" do
+      [200, {}, self.host.inspect]
+    end
+    
     private
     
     class APIRequest
