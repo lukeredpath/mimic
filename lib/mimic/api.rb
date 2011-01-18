@@ -72,7 +72,7 @@ module Mimic
         end
         
         def on(host)
-          host.send(@method.downcase.to_sym, path).returning(body, code, headers)
+          host.send(@method.downcase.to_sym, path).returning(body, code, headers).with_query_parameters(params)
         end
 
         def path
@@ -89,6 +89,10 @@ module Mimic
 
         def headers
           @data['headers'] || {}
+        end
+        
+        def params
+          @data['params'] || {}
         end
       end
     end
