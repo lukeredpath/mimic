@@ -138,7 +138,8 @@ module Mimic
       def extract_echo_from_request(request)
         echo = {"echo" => {
           "params" => request.params,
-          "env"    => env_without_rack_env(request.env)
+          "env"    => env_without_rack_env(request.env),
+          "body"   => request.body.read
         }}        
         case @echo_request_format
         when :json
