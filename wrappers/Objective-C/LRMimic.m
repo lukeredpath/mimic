@@ -225,6 +225,7 @@ static BOOL automaticallyClearStubs = NO;
 
 - (void)dealloc
 {
+  [queryParameters release];
   [headers release];
   [method release];
   [path release];
@@ -232,11 +233,18 @@ static BOOL automaticallyClearStubs = NO;
   [super dealloc];
 }
 
-- (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode headers:(NSDictionary *)theHeaders;
+- (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode 
+                   headers:(NSDictionary *)theHeaders queryParameters:(NSDictionary *)params;
 {
   body = [responseBody copy];
   code = statusCode;
   headers = [theHeaders copy];
+  queryParameters = [params copy];
+}
+
+- (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode headers:(NSDictionary *)theHeaders;
+{
+  [self willReturnResponse:responseBody withStatus:statusCode headers:theHeaders queryParameters:nil];
 }
 
 - (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode;
@@ -254,6 +262,9 @@ static BOOL automaticallyClearStubs = NO;
   if (headers) {
     [dictionary setObject:headers forKey:@"headers"];
   }
+  if (queryParameters) {
+    [dictionary setObject:queryParameters forKey:@"params"];
+  }
   return dictionary;
 }
 
@@ -264,7 +275,7 @@ static BOOL automaticallyClearStubs = NO;
 
 @implementation LRMimicRequestStubBuilder
 
-@synthesize path, method, code, body, headers;
+@synthesize path, method, code, body, headers, queryParameters;
 
 + (id)builder;
 {
@@ -279,12 +290,14 @@ static BOOL automaticallyClearStubs = NO;
     self.code = 200;
     self.body = @"";
     self.headers = [NSDictionary dictionary];
+    self.queryParameters = [NSDictionary dictionary];
   }
   return self;
 }
 
 - (void)dealloc
 {
+  [queryParameters release];
   [path release];
   [method release];
   [body release];
@@ -295,10 +308,9 @@ static BOOL automaticallyClearStubs = NO;
 - (LRMimicRequestStub *)buildStub;
 {
   LRMimicRequestStub *stub = [LRMimicRequestStub stub:self.path method:self.method];
-  [stub willReturnResponse:self.body withStatus:self.code headers:self.headers];
+  [stub willReturnResponse:self.body withStatus:self.code headers:self.headers queryParameters:self.queryParameters];
   return stub;
 }
 
 @end
-
 

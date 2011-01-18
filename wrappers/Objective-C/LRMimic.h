@@ -50,12 +50,15 @@ typedef void (^LRMimicCallback)(BOOL);
   NSString *body;
   NSInteger code;
   NSDictionary *headers;
+  NSDictionary *queryParameters;
 }
 + (id)stub:(NSString *)path;
 + (id)stub:(NSString *)path method:(NSString *)method;
 - (id)initWithPath:(NSString *)aPath method:(NSString *)HTTPMethod;
 - (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode;
 - (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode headers:(NSDictionary *)theHeaders;
+- (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode 
+                   headers:(NSDictionary *)theHeaders queryParameters:(NSDictionary *)params;
 - (NSDictionary *)toDictionary;
 @end
 
@@ -66,6 +69,7 @@ typedef void (^LRMimicCallback)(BOOL);
 @property (nonatomic, assign) NSInteger code;
 @property (nonatomic, copy) NSString *body;
 @property (nonatomic, copy) NSDictionary *headers;
+@property (nonatomic, copy) NSDictionary *queryParameters;
 
 + (id)builder;
 - (LRMimicRequestStub *)buildStub;
