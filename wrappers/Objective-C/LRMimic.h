@@ -40,6 +40,7 @@ typedef void (^LRMimicCallback)(BOOL);
 - (LRMimicRequestStub *)delete:(NSString *)path;
 - (LRMimicRequestStub *)head:(NSString *)path;
 - (LRMimicRequestStub *)stub:(NSString *)path method:(NSString *)httpMethod;
+- (void)addRequestStub:(LRMimicRequestStub *)stub;
 @end
 
 @interface LRMimicRequestStub : NSObject
@@ -48,11 +49,25 @@ typedef void (^LRMimicCallback)(BOOL);
   NSString *path;
   NSString *body;
   NSInteger code;
+  NSDictionary *headers;
 }
 + (id)stub:(NSString *)path;
 + (id)stub:(NSString *)path method:(NSString *)method;
 - (id)initWithPath:(NSString *)aPath method:(NSString *)HTTPMethod;
 - (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode;
+- (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode headers:(NSDictionary *)theHeaders;
 - (NSDictionary *)toDictionary;
+@end
+
+@interface LRMimicRequestStubBuilder : NSObject
+{}
+@property (nonatomic, copy) NSString *path;
+@property (nonatomic, copy) NSString *method;
+@property (nonatomic, assign) NSInteger code;
+@property (nonatomic, copy) NSString *body;
+@property (nonatomic, copy) NSDictionary *headers;
+
++ (id)builder;
+- (LRMimicRequestStub *)buildStub;
 @end
 

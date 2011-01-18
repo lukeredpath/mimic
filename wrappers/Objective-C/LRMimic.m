@@ -7,7 +7,7 @@
 //
 
 #import "LRMimic.h"
-#import <LRResty/LRResty.h>
+#import "LRResty.h"
 
 @interface LRMimic ()
 + (id)sharedInstance;
@@ -186,8 +186,13 @@ static BOOL automaticallyClearStubs = NO;
 - (LRMimicRequestStub *)stub:(NSString *)path method:(NSString *)httpMethod;
 {
   LRMimicRequestStub *stub = [LRMimicRequestStub stub:path method:httpMethod];
-  [stubs addObject:stub];
+  [self addRequestStub:stub];
   return stub;
+}
+
+- (void)addRequestStub:(LRMimicRequestStub *)stub;
+{
+  [stubs addObject:stub];
 }
 
 @end
@@ -220,16 +225,23 @@ static BOOL automaticallyClearStubs = NO;
 
 - (void)dealloc
 {
+  [headers release];
   [method release];
   [path release];
   [body release];
   [super dealloc];
 }
 
-- (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode;
+- (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode headers:(NSDictionary *)theHeaders;
 {
   body = [responseBody copy];
   code = statusCode;
+  headers = [theHeaders copy];
+}
+
+- (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode;
+{
+  [self willReturnResponse:responseBody withStatus:statusCode headers:nil];
 }
 
 - (NSDictionary *)toDictionary;
@@ -239,8 +251,54 @@ static BOOL automaticallyClearStubs = NO;
   [dictionary setObject:path forKey:@"path"];
   [dictionary setObject:body forKey:@"body"];
   [dictionary setObject:[NSNumber numberWithInteger:code] forKey:@"code"];
+  if (headers) {
+    [dictionary setObject:headers forKey:@"headers"];
+  }
   return dictionary;
 }
 
 @end
+
+#pragma mark -
+#pragma mark Stub builder
+
+@implementation LRMimicRequestStubBuilder
+
+@synthesize path, method, code, body, headers;
+
++ (id)builder;
+{
+  return [[[self alloc] init] autorelease];
+}
+
+- (id)init
+{
+  if (self = [super init]) {
+    self.path = @"/";
+    self.method = @"GET";
+    self.code = 200;
+    self.body = @"";
+    self.headers = [NSDictionary dictionary];
+  }
+  return self;
+}
+
+- (void)dealloc
+{
+  [path release];
+  [method release];
+  [body release];
+  [headers release];
+  [super dealloc];
+}
+
+- (LRMimicRequestStub *)buildStub;
+{
+  LRMimicRequestStub *stub = [LRMimicRequestStub stub:self.path method:self.method];
+  [stub willReturnResponse:self.body withStatus:self.code headers:self.headers];
+  return stub;
+}
+
+@end
+
 

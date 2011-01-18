@@ -86,6 +86,7 @@ module Mimic
         @method, @path = method, path
         @code = 200
         @headers = {}
+        @params = {}
         @body = ""
         @app = app
       end
@@ -98,9 +99,35 @@ module Mimic
         end
       end
       
+      def with_query_parameters(params)
+        tap do
+          @params = params
+        end
+      end
+      
+      def matches?(request)
+        if @params.any?
+          request.params == @params
+        else
+          true
+        end
+      end
+      
+      def matched_response
+        [@code, @headers, @body]
+      end
+      
+      def unmatched_response
+        [404, "", {}]
+      end
+      
+      def response_for_request(request)
+        matches?(request) ? matched_response : unmatched_response
+      end
+      
       def build
-        response = [@code, @headers, @body]
-        @app.send(@method.downcase, @path) { response }
+        stub = self
+        @app.send(@method.downcase, @path) { stub.response_for_request(request) }
       end
     end
   end
