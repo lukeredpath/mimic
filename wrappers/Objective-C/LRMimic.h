@@ -51,10 +51,12 @@ typedef void (^LRMimicCallback)(BOOL);
   NSInteger code;
   NSDictionary *headers;
   NSDictionary *queryParameters;
+  BOOL shouldEchoRequest;
 }
 + (id)stub:(NSString *)path;
 + (id)stub:(NSString *)path method:(NSString *)method;
 - (id)initWithPath:(NSString *)aPath method:(NSString *)HTTPMethod;
+- (void)andEchoRequest;
 - (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode;
 - (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode headers:(NSDictionary *)theHeaders;
 - (void)willReturnResponse:(NSString *)responseBody withStatus:(NSInteger)statusCode 
@@ -70,6 +72,7 @@ typedef void (^LRMimicCallback)(BOOL);
 @property (nonatomic, copy) NSString *body;
 @property (nonatomic, copy) NSDictionary *headers;
 @property (nonatomic, copy) NSDictionary *queryParameters;
+@property (nonatomic, assign) BOOL echoRequest;
 
 + (id)builder;
 - (LRMimicRequestStub *)buildStub;

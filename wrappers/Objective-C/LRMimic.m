@@ -219,6 +219,7 @@ static BOOL automaticallyClearStubs = NO;
     path = [aPath copy];
     body = [[NSString alloc] initWithString:@""];
     code = 200;
+    shouldEchoRequest = NO;
   }
   return self;
 }
@@ -252,6 +253,11 @@ static BOOL automaticallyClearStubs = NO;
   [self willReturnResponse:responseBody withStatus:statusCode headers:nil];
 }
 
+- (void)andEchoRequest;
+{
+  shouldEchoRequest = YES;
+}
+
 - (NSDictionary *)toDictionary;
 {
   NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
@@ -259,6 +265,9 @@ static BOOL automaticallyClearStubs = NO;
   [dictionary setObject:path forKey:@"path"];
   [dictionary setObject:body forKey:@"body"];
   [dictionary setObject:[NSNumber numberWithInteger:code] forKey:@"code"];
+  if (shouldEchoRequest) {
+    [dictionary setObject:@"plist" forKey:@"echo"];
+  }
   if (headers) {
     [dictionary setObject:headers forKey:@"headers"];
   }
@@ -275,7 +284,7 @@ static BOOL automaticallyClearStubs = NO;
 
 @implementation LRMimicRequestStubBuilder
 
-@synthesize path, method, code, body, headers, queryParameters;
+@synthesize path, method, code, body, headers, queryParameters, echoRequest;
 
 + (id)builder;
 {
@@ -291,6 +300,7 @@ static BOOL automaticallyClearStubs = NO;
     self.body = @"";
     self.headers = [NSDictionary dictionary];
     self.queryParameters = [NSDictionary dictionary];
+    self.echoRequest = NO;
   }
   return self;
 }
@@ -309,6 +319,9 @@ static BOOL automaticallyClearStubs = NO;
 {
   LRMimicRequestStub *stub = [LRMimicRequestStub stub:self.path method:self.method];
   [stub willReturnResponse:self.body withStatus:self.code headers:self.headers queryParameters:self.queryParameters];
+  if (self.echoRequest) {
+    [stub andEchoRequest];
+  }
   return stub;
 }
 
