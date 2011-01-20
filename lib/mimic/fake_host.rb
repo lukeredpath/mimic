@@ -53,6 +53,9 @@ module Mimic
       @app.not_found do
         [404, {}, ""]
       end
+      @app.helpers do
+        include Helpers
+      end
       @imports.each { |file| import(file) }
     end
     
@@ -84,6 +87,53 @@ module Mimic
       end
 
       @url_map = Rack::URLMap.new(routes)
+    end
+    
+    module Helpers
+      def echo_request!(format)
+        RequestEcho.new(request).response_as(format)
+      end
+    end
+    
+    class RequestEcho
+      def initialize(request)
+        @request = request
+      end
+      
+      def response_as(format)
+        content_type = case format
+        when :json, :plist
+          "application/#{format.to_s.downcase}"
+        else
+          "text/plain"
+        end
+        [200, {"Content-Type" => content_type}, to_s(format)]
+      end
+      
+      def to_s(format)
+        case format
+          when :json
+            to_hash.to_json
+          when :plist
+            to_hash.to_plist
+          when :text
+            to_hash.inspect
+        end
+      end
+      
+      def to_hash
+        {"echo" => {
+          "params" => @request.params,
+          "env"    => env_without_rack_env,
+          "body"   => @request.body.read
+        }}
+      end
+      
+      private
+      
+      def env_without_rack_env
+        Hash[*@request.env.select { |key, value| key !~ /^rack/i }.flatten]
+      end
     end
     
     class StubbedRequest
@@ -131,33 +181,16 @@ module Mimic
       end
       
       def response_for_request(request)
-        extract_echo_from_request(request) if @echo_request_format
+        if @echo_request_format
+          @body = RequestEcho.new(request).to_s(@echo_request_format)
+        end
+        
         matches?(request) ? matched_response : unmatched_response
       end
       
       def build
         stub = self
         @app.send(@method.downcase, @path) { stub.response_for_request(request) }
-      end
-      
-      def extract_echo_from_request(request)
-        echo = {"echo" => {
-          "params" => request.params,
-          "env"    => env_without_rack_env(request.env),
-          "body"   => request.body.read
-        }}        
-        case @echo_request_format
-        when :json
-          @body = echo.to_json
-        when :plist
-          @body = echo.to_plist
-        when :text
-          @body = echo.inspect
-        end
-      end
-      
-      def env_without_rack_env(env)
-        Hash[*env.select { |key, value| key !~ /^rack/i }.flatten]
       end
     end
   end
