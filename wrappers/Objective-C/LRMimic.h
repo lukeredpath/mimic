@@ -25,6 +25,7 @@ typedef void (^LRMimicCallback)(BOOL);
 + (void)reset;
 + (void)configure:(LRMimicConfigurationBlock)configurationBlock;
 + (void)stubAndCall:(LRMimicCallback)callback;
+- (void)ping;
 - (void)prepareStubs:(LRMimicCallback)callback;
 - (void)prepareStubs:(LRMimicCallback)callback clearRemote:(BOOL)clearRemote;
 - (void)clearRemoteStubs:(LRMimicCallback)callback;

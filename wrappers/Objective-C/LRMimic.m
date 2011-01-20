@@ -20,6 +20,7 @@
 
 static NSString *mimicURL = nil;
 static BOOL automaticallyClearStubs = NO;
+static BOOL pingsWhenInitialized = YES;
 
 + (void)setURL:(NSString *)url;
 {
@@ -30,6 +31,11 @@ static BOOL automaticallyClearStubs = NO;
 + (void)setAutomaticallyClearsStubs:(BOOL)shouldClear
 {
   automaticallyClearStubs = shouldClear;
+}
+
++ (void)setPingsWhenInitialized:(BOOL)shouldPing
+{
+  pingsWhenInitialized = shouldPing;
 }
 
 + (void)reset;
@@ -62,8 +68,24 @@ static BOOL automaticallyClearStubs = NO;
     [client attachRequestModifier:^(LRRestyRequest *req) {
       [req addHeader:@"Content-Type" value:@"application/plist"];
     }];
+
+    if (pingsWhenInitialized) {
+      [self ping];
+    }
   }
   return self;
+}
+
+- (void)ping;
+{
+  LRRestyResponse *response = [client get:[URL stringByAppendingPathComponent:@"/ping"]];
+  
+  if (response.status != 200) {
+    [[NSException exceptionWithName:@"MimicError" 
+                             reason:[NSString stringWithFormat:@"Couldn't ping Mimic (response: %@)", response] 
+                           userInfo:nil] raise];
+  }
+  
 }
 
 - (void)dealloc
