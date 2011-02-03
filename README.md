@@ -1,8 +1,6 @@
 # What is Mimic?
 Mimic is a testing tool that lets you set create a fake stand-in for an external web service to be used when writing integration/end-to-end tests for applications or libraries that access these services.
 
-Note: this is still very early in its development; don't let the existence of this README fool you into thinking its ready for prime-time!
-
 ## Why not stub?
 There are already some good tools, like [FakeWeb](http://fakeweb.rubyforge.org/) which let you stub requests at a low-level which is fine for unit and functional tests but when exercising our code through integration or end-to-end tests we want to exercise as much of the stack as possible.
 
