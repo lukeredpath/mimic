@@ -10,8 +10,7 @@ module Mimic
     :hostname => 'localhost',
     :port => MIMIC_DEFAULT_PORT,
     :remote_configuration_path => nil,
-    :fork => true,
-    :trap_signals => true
+    :fork => true
   }
 
   def self.mimic(options = {}, &block)
@@ -67,9 +66,9 @@ module Mimic
       }) do |server|
         @server = server
 
-        if options[:trap_signals]
-          trap("TERM") { @server.shutdown }
-          trap("INT")  { @server.shutdown }
+        old = trap('EXIT') do
+          old.call if old
+          @server.shutdown
         end
       end
     end
