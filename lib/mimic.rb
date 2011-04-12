@@ -45,21 +45,21 @@ module Mimic
       @logger ||= Logger.new(StringIO.new)
     end
 
-    def serve(host_app, port, should_fork, should_trap)
+    def serve(app, options)
       if options[:fork]
         @thread = Thread.fork do
-          start_service(host_app, options)
+          start_service(app, options)
         end
 
-        wait_for_service(host_app.hostname, options[:port])
+        wait_for_service(app.hostname, options[:port])
 
       else
-        start_service(host_app, options)
+        start_service(app, options)
       end
     end
 
-    def start_service(host_app, options)
-      Rack::Handler::WEBrick.run(host_app.url_map, {
+    def start_service(app, options)
+      Rack::Handler::WEBrick.run(app.url_map, {
         :Port       => options[:port],
         :Logger     => logger,
         :AccessLog  => logger,
