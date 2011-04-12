@@ -19,7 +19,7 @@ module Mimic
 
     host = FakeHost.new(options[:hostname], options[:remote_configuration_path]).tap do |host|
       host.instance_eval(&block) if block_given?
-      Server.instance.serve(host, options[:port], options[:fork], options[:trap_signals])
+      Server.instance.serve(host, options)
     end
     add_host(host)
   end
@@ -46,28 +46,28 @@ module Mimic
     end
 
     def serve(host_app, port, should_fork, should_trap)
-      if should_fork
+      if options[:fork]
         @thread = Thread.fork do
-          start_service(host_app, port, should_trap)
+          start_service(host_app, options)
         end
 
-        wait_for_service(host_app.hostname, port)
-        
+        wait_for_service(host_app.hostname, options[:port])
+
       else
-        start_service(host_app, port, should_trap)
+        start_service(host_app, options)
       end
     end
 
-    def start_service(host_app, port, should_trap)
+    def start_service(host_app, options)
       Rack::Handler::WEBrick.run(host_app.url_map, {
-        :Port       => port,
+        :Port       => options[:port],
         :Logger     => logger,
         :AccessLog  => logger,
 
       }) do |server|
         @server = server
 
-        if should_trap
+        if options[:trap_signals]
           trap("TERM") { @server.shutdown }
           trap("INT")  { @server.shutdown }
         end
