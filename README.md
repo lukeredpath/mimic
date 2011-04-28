@@ -78,6 +78,7 @@ The end-point of the API is the HTTP verb you are stubbing, the path, response b
 ## Contributors
 
 * [James Fairbairn](http://github.com/jfairbairn)
+* [Marcello Barnaba](https://github.com/vjt)
 
 ## License
 
