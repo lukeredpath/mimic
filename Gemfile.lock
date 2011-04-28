@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mimic (0.4.1)
+    mimic (0.4.2)
       json
       plist
       rack
@@ -20,7 +20,6 @@ GEM
     diff-lcs (1.1.2)
     gherkin (2.3.3)
       json (~> 1.4.6)
-    hashie (0.4.0)
     json (1.4.6)
     mime-types (1.16)
     mocha (0.9.10)
@@ -49,12 +48,7 @@ PLATFORMS
 
 DEPENDENCIES
   cucumber
-  hashie
-  json
   mimic!
   mocha
-  plist
-  rack
   rest-client
   rspec (~> 2.4.0)
-  sinatra
