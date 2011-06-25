@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Mimic::FakeHost" do
   before do
-    @host = Mimic::FakeHost.new("www.example.com")
+    @host = Mimic::FakeHost.new(:hostname => "www.example.com")
   end
   
   it "should handle stubbed requests" do

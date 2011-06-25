@@ -10,13 +10,14 @@ module Mimic
     :hostname => 'localhost',
     :port => MIMIC_DEFAULT_PORT,
     :remote_configuration_path => nil,
-    :fork => true
+    :fork => true,
+    :log => nil
   }
 
   def self.mimic(options = {}, &block)
     options = MIMIC_DEFAULT_OPTIONS.merge(options)
 
-    host = FakeHost.new(options[:hostname], options[:remote_configuration_path]).tap do |host|
+    host = FakeHost.new(options).tap do |host|
       host.instance_eval(&block) if block_given?
       Server.instance.serve(host, options)
     end

@@ -4,10 +4,12 @@ require 'mimic/api'
 module Mimic
   class FakeHost
     attr_reader :hostname, :url_map
+    attr_accessor :log
     
-    def initialize(hostname, remote_configuration_path = nil)
-      @hostname = hostname
-      @remote_configuration_path = remote_configuration_path
+    def initialize(options = {})
+      @hostname = options[:hostname]
+      @remote_configuration_path = options[:remote_configuration_path]
+      @log = options[:log]
       @imports = []
       clear      
       build_url_map!
@@ -50,6 +52,7 @@ module Mimic
     def clear
       @stubs = []
       @app = Sinatra.new
+      @app.use Rack::CommonLogger, self.log if self.log
       @app.not_found do
         [404, {}, ""]
       end
