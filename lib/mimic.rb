@@ -5,18 +5,37 @@ require 'logger'
 
 module Mimic
   MIMIC_DEFAULT_PORT = 11988
-  
+
+  MIMIC_DEFAULT_OPTIONS = {
+    :hostname => 'localhost',
+    :port => MIMIC_DEFAULT_PORT,
+    :remote_configuration_path => nil,
+    :fork => true,
+    :log => nil
+  }
+
   def self.mimic(options = {}, &block)
-    options = {:hostname => 'localhost', :port => MIMIC_DEFAULT_PORT}.merge(options)
-    
-    FakeHost.new(options[:hostname]).tap do |host|
+    options = MIMIC_DEFAULT_OPTIONS.merge(options)
+
+    host = FakeHost.new(options).tap do |host|
       host.instance_eval(&block) if block_given?
-      Server.instance.serve(host, options[:port])
+      Server.instance.serve(host, options)
     end
+    add_host(host)
   end
-  
+
   def self.cleanup!
     Mimic::Server.instance.shutdown
+  end
+  
+  def self.reset_all!
+    @hosts.each { |h| h.clear }
+  end
+  
+  private
+  
+  def self.add_host(host)
+    host.tap { |h| (@hosts ||= []) << h }
   end
 
   class Server
@@ -26,28 +45,42 @@ module Mimic
       @logger ||= Logger.new(StringIO.new)
     end
 
-    def serve(host_app, port)
-      @thread = Thread.fork do
-        Rack::Handler::WEBrick.run(host_app, 
-          :Port      => port, 
-          :Logger    => logger, 
-          :AccessLog => logger
-          
-        ) { |server| @server = server }
+    def serve(app, options)
+      if options[:fork]
+        @thread = Thread.fork do
+          start_service(app, options)
+        end
+
+        wait_for_service(app.hostname, options[:port])
+
+      else
+        start_service(app, options)
       end
-      
-      wait_for_service(host_app.hostname, port)
     end
-    
+
+    def start_service(app, options)
+      Rack::Handler::WEBrick.run(app.url_map, {
+        :Port       => options[:port],
+        :Logger     => logger,
+        :AccessLog  => logger,
+
+      }) do |server|
+        @server = server
+
+        old = trap('EXIT') do
+          old.call if old
+          @server.shutdown
+        end
+      end
+    end
+
     def shutdown
-      if @thread
-        Thread.kill(@thread) 
-        @server.shutdown
-      end
+      Thread.kill(@thread) if @thread
+      @server.shutdown if @server
     end
-    
+
     # courtesy of http://is.gd/eoYho
-    
+
     def listening?(host, port)
       begin
         socket = TCPSocket.new(host, port)

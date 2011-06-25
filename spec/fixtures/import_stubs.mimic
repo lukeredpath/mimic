@@ -1,0 +1,3 @@
+get "/imported/path" do
+  [200, {}, ""]
+end

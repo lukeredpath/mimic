@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+lib_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
+$LOAD_PATH.unshift(lib_dir) unless $LOAD_PATH.include?(lib_dir)
+
+require 'mimic'
+
+Daemons.run_proc("mimic") do
+  Mimic.mimic(:fork => false, :remote_configuration_path => "/api") do
+    get("/ping") { "pong\n" }
+  end
+end
