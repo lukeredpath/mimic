@@ -3,6 +3,8 @@ require 'cucumber'
 require 'cucumber/rake/task'
 require 'rspec/core/rake_task'
 
+ENV["MIMIC_TEST_PROXY"] = nil
+
 desc "Run all Cucumber features"
 Cucumber::Rake::Task.new(:features) do |t|
   t.cucumber_opts = "features --format pretty"
