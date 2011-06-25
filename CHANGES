@@ -1,3 +1,7 @@
+## 0.4.3
+
+* Added request logging support.
+
 ## 0.4.2
 
 * Remove unnecessary signal traps.
