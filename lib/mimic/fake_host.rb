@@ -49,7 +49,7 @@ module Mimic
     
     def clear
       @stubs = []
-      @app = Class.new(Sinatra::Base)
+      @app = Sinatra.new
       @app.not_found do
         [404, {}, ""]
       end
