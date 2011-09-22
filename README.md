@@ -58,7 +58,7 @@ First of all, you'll need to run Mimic as a daemon. You can do this with a simpl
     require 'daemons'
     
     Daemons.run_proc("mimic") do
-      Mimic.mimic(:port => 11988, :fork => false) do
+      Mimic.mimic(:port => 11988, :fork => false, :remote_configuration_path => '/api') do
         # configure your stubs here
       end
     end
