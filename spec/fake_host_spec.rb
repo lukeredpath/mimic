@@ -81,9 +81,9 @@ describe "Mimic::FakeHost" do
   
   RSpec::Matchers.define :match_rack_response do |code, headers, body|
     match do |actual|
-      (actual[0].should == code) &&
-      (actual[1].should include(headers)) &&
-      (actual[2].should include(body))
+      (actual[0] == code) &&
+      (headers.all? {|k, v| actual[1][k] == v }) &&
+      (actual[2].include?(body))
     end
   end
 end
