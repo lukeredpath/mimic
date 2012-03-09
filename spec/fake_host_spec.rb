@@ -69,6 +69,23 @@ describe "Mimic::FakeHost" do
     }.should raise_error
   end
   
+  it "returns a StubbedRequest" do
+    @host.get("/some/path").should be_kind_of(Mimic::FakeHost::StubbedRequest)
+  end
+  
+  describe "StubbedRequest" do
+    it "has a unique hash based on it's parameters" do
+      host = Mimic::FakeHost::StubbedRequest.new(stub, "GET", "/path")
+      host.to_hash.should == Digest::MD5.digest("GET /path")
+    end
+    
+    it "has the same hash as an equivalent request" do
+      host_one = Mimic::FakeHost::StubbedRequest.new(stub, "GET", "/path")
+      host_two = Mimic::FakeHost::StubbedRequest.new(stub, "GET", "/path")
+      host_one.to_hash.should == host_two.to_hash
+    end
+  end
+  
   private
   
   def request_for(path, options={})

@@ -15,6 +15,10 @@ module Mimic
       build_url_map!
     end
     
+    def received_requests
+      @stubs.select { |s| s.received }
+    end
+    
     def get(path, &block)
       request("GET", path, &block)
     end
@@ -140,6 +144,8 @@ module Mimic
     end
     
     class StubbedRequest
+      attr_accessor :received
+      
       def initialize(app, method, path)
         @method, @path = method, path
         @code = 200
@@ -147,6 +153,12 @@ module Mimic
         @params = {}
         @body = ""
         @app = app
+        @received = false
+      end
+      
+      def to_hash
+        token = "#{@method} #{@path}"
+        Digest::MD5.hexdigest(token)
       end
       
       def returning(body, code = 200, headers = {})
@@ -193,7 +205,11 @@ module Mimic
       
       def build
         stub = self
-        @app.send(@method.downcase, @path) { stub.response_for_request(request) }
+
+        @app.send(@method.downcase, @path) do
+          stub.received = true
+          stub.response_for_request(request)
+        end
       end
     end
   end

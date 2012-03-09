@@ -15,14 +15,14 @@ module Mimic
       post "/#{verb}" do
         api_request = APIRequest.from_request(request, verb)
         api_request.setup_stubs_on(host)
-        [201, {}, api_request.to_s]
+        [201, {"Content-Type" => api_request.request_content_type}, api_request.response]
       end
     end
     
     post "/multi" do
       api_request = APIRequest.from_request(request)
       api_request.setup_stubs_on(host)
-      [201, {}, api_request.to_s]
+      [201, {"Content-Type" => api_request.request_content_type}, api_request.response]
     end
     
     post "/clear" do
@@ -39,16 +39,37 @@ module Mimic
       [200, {}, self.host.inspect]
     end
     
+    get "/requests" do
+      [200, {"Content-Type" => "application/json"}, {"requests" => host.received_requests.map(&:to_hash)}.to_json]
+    end
+    
     private
     
     class APIRequest
-      def initialize(data, method = nil)
+      attr_reader :request_content_type
+      
+      def initialize(data, method = nil, request_content_type)
         @data = data
         @method = (method || "GET")
+        @stubs = []
+        @request_content_type = request_content_type
       end
       
       def to_s
         @data.inspect
+      end
+      
+      def response
+        response = {"stubs" => @stubs.map(&:to_hash)}
+        
+        case request_content_type
+        when /json/
+          response.to_json
+        when /plist/
+          response.to_plist
+        else
+          response.to_json
+        end
       end
       
       def self.from_request(request, method = nil)
@@ -60,12 +81,12 @@ module Mimic
           else
             data = JSON.parse(request.body.string)
         end
-        new(data, method)
+        new(data, method, request.content_type)
       end
       
       def setup_stubs_on(host)
         (@data["stubs"] || [@data]).each do |stub_data|
-          Stub.new(stub_data, stub_data['method'] || @method).on(host)
+          @stubs << Stub.new(stub_data, stub_data['method'] || @method).on(host)
         end
       end
       
@@ -76,9 +97,10 @@ module Mimic
         end
         
         def on(host)
-          stub = host.send(@method.downcase.to_sym, path).returning(body, code, headers)
-          stub.with_query_parameters(params)
-          stub.echo_request!(echo_format)
+          host.send(@method.downcase.to_sym, path).returning(body, code, headers).tap do |stub|
+            stub.with_query_parameters(params)
+            stub.echo_request!(echo_format)
+          end
         end
         
         def echo_format
