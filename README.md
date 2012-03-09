@@ -85,6 +85,8 @@ Likewise, a POST request to the same path could be stubbed like so:
 
 The end-point of the API is the HTTP verb you are stubbing, the path, response body, code and headers are specified in the POST data (a hash in JSON or Plist format). See the HTTP API Cucumber features for more examples.
 
+An [Objective-C wrapper](http://github.com/lukeredpath/LRMimic) for the REST API is available, allowing you to use mimic for your OSX and iOS apps.
+
 ## Contributors
 
 * [James Fairbairn](http://github.com/jfairbairn)
