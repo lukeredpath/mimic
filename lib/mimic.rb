@@ -67,8 +67,13 @@ module Mimic
       }) do |server|
         @server = server
 
-        old = trap('EXIT') do
-          old.call if old
+        @previous_int_handler = trap('INT') do
+          begin
+            # support case of default command String names
+            @previous_int_handler.call if @previous_int_handler and @previous_int_handler.respond_to?("call")
+          rescue StandardError => e
+            puts "Error occurred invoking previous interrupt handler: #{e.class} #{e.to_s}"
+          end
           @server.shutdown
         end
       end
