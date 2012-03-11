@@ -59,7 +59,7 @@ module Mimic
     end
 
     def start_service(app, options)
-      Rack::Handler::WEBrick.run(app.url_map, {
+      Rack::Handler::Thin.run(app.url_map, {
         :Port       => options[:port],
         :Logger     => logger,
         :AccessLog  => logger,

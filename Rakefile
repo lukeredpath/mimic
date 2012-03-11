@@ -47,6 +47,7 @@ spec = Gem::Specification.new do |s|
   # relevant versions
   s.add_dependency("rack")
   s.add_dependency("sinatra")
+  s.add_dependency("thin")
   s.add_dependency("json")
   s.add_dependency("plist")
 

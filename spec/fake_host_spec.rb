@@ -76,7 +76,7 @@ describe "Mimic::FakeHost" do
   describe "StubbedRequest" do
     it "has a unique hash based on it's parameters" do
       host = Mimic::FakeHost::StubbedRequest.new(stub, "GET", "/path")
-      host.to_hash.should == Digest::MD5.digest("GET /path")
+      host.to_hash.should == Digest::MD5.hexdigest("GET /path")
     end
     
     it "has the same hash as an equivalent request" do
