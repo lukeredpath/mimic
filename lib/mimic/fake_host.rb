@@ -131,15 +131,15 @@ module Mimic
       def to_hash
         {"echo" => {
           "params" => @request.params,
-          "env"    => env_without_rack_env,
+          "env"    => env_without_rack_and_async_env,
           "body"   => @request.body.read
         }}
       end
       
       private
       
-      def env_without_rack_env
-        Hash[*@request.env.select { |key, value| key !~ /^rack/i }.flatten]
+      def env_without_rack_and_async_env
+        Hash[*@request.env.select { |key, value| key !~ /^(rack|async)/i }.flatten]
       end
     end
     
