@@ -48,7 +48,7 @@ module Mimic
     class APIRequest
       attr_reader :request_content_type
       
-      def initialize(data, method = nil, request_content_type)
+      def initialize(data, method = nil, request_content_type = '')
         @data = data
         @method = (method || "GET")
         @stubs = []
