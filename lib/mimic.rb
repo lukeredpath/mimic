@@ -63,25 +63,11 @@ module Mimic
         :Port       => options[:port],
         :Logger     => logger,
         :AccessLog  => logger,
-
-      }) do |server|
-        @server = server
-
-        @previous_int_handler = trap('INT') do
-          begin
-            # support case of default command String names
-            @previous_int_handler.call if @previous_int_handler and @previous_int_handler.respond_to?("call")
-          rescue StandardError => e
-            puts "Error occurred invoking previous interrupt handler: #{e.class} #{e.to_s}"
-          end
-          @server.shutdown
-        end
-      end
+      })
     end
 
     def shutdown
       Thread.kill(@thread) if @thread
-      @server.shutdown if @server
     end
 
     # courtesy of http://is.gd/eoYho
