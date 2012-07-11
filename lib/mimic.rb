@@ -21,7 +21,6 @@ module Mimic
 
     host = @existing_hosts[options]
     if host.nil?
-      $stderr.puts "Creating new host"
       host = FakeHost.new(options).tap do |host|
         host.instance_eval(&block) if block_given?
         Server.instance.serve(host, options)
@@ -29,7 +28,6 @@ module Mimic
       @existing_hosts[options] = host
       add_host(host)
     else 
-      $stderr.puts "Loading host from hash"
       host.instance_eval(&block) if block_given?
     end
     
@@ -37,7 +35,6 @@ module Mimic
   end
 
   def self.cleanup!
-    $stderr.puts "Clearing hash"
     @existing_hosts = Hash.new
     Mimic::Server.instance.shutdown
   end
