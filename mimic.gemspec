@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = "mimic"
-  s.version = "0.4.3"
+  s.version = "0.4.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Luke Redpath"]
-  s.date = "2012-03-17"
+  s.date = "2012-07-12"
   s.email = "luke@lukeredpath.co.uk"
   s.extra_rdoc_files = ["README.md"]
   s.files = ["LICENSE", "CHANGES", "Rakefile", "README.md", "spec", "lib/mimic", "lib/mimic/api.rb", "lib/mimic/fake_host.rb", "lib/mimic.rb"]
