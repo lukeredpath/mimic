@@ -11,7 +11,8 @@ module Mimic
     :port => MIMIC_DEFAULT_PORT,
     :remote_configuration_path => nil,
     :fork => true,
-    :log => nil
+    :log => nil,
+    :timeout => 5
   }
 
   def self.mimic(options = {}, &block)
@@ -51,7 +52,7 @@ module Mimic
           start_service(app, options)
         end
 
-        wait_for_service(app.hostname, options[:port])
+        wait_for_service(app.hostname, options[:port], timeout = options[:timeout])
 
       else
         start_service(app, options)
