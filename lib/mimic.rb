@@ -2,6 +2,7 @@ require 'mimic/fake_host'
 require 'singleton'
 require 'rack'
 require 'logger'
+require 'socket'
 
 module Mimic
   MIMIC_DEFAULT_PORT = 11988
