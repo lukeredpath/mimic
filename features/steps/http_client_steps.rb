@@ -58,3 +58,11 @@ Then /^I should receive an HTTP (\d+) response with the Plist value "([^\"]*)" f
   plist = Plist.parse_xml(@httpclient.last_response.to_s)
   plist.value_for_key_path(key_path).should == json_value
 end
+
+# For debugging. You'll need to gem install bcat
+Then /^show me the response$/ do
+  IO.popen("bcat", "w") do |bcat|
+    bcat.puts @httpclient.last_response
+  end
+end
+
