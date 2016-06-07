@@ -66,7 +66,7 @@ describe "Mimic::FakeHost" do
   it "should raise if import file does not exist" do
     proc { 
       @host.import(File.join(File.dirname(__FILE__), *%w[fixtures doesnt_exist.mimic]))
-    }.should raise_error
+    }.should raise_error(RuntimeError)
   end
   
   it "returns a StubbedRequest" do
