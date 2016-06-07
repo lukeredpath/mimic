@@ -34,19 +34,19 @@ Then /^I should receive an HTTP (\d+) response with an empty body$/ do |status_c
 end
 
 Then /^I should receive an HTTP (\d+) response with a body matching "([^\"]*)"$/ do |status_code, http_body|
-  @httpclient.should have_response_with_code_and_body(status_code.to_i, http_body)
+  expect(@httpclient).to have_response_with_code_and_body(status_code.to_i, http_body)
 end
 
 Then /^I should receive an HTTP (\d+) response with a body containing:$/ do |status_code, http_body|
-  @httpclient.should have_response_with_code_and_body(status_code.to_i, http_body)
+  expect(@httpclient).to have_response_with_code_and_body(status_code.to_i, http_body)
 end
 
 Then /^I should receive an HTTP (\d+) response$/ do |status_code|
-  @httpclient.should have_response_with_code(status_code.to_i)
+  expect(@httpclient).to have_response_with_code(status_code.to_i)
 end
 
 Then /^I should receive an HTTP (\d+) response with the value "([^\"]*)" for the header "([^\"]*)"$/ do |status_code, header_value, header_key|
-  @httpclient.should have_response_with_code_and_header(status_code.to_i, header_key, header_value)
+  expect(@httpclient).to have_response_with_code_and_header(status_code.to_i, header_key, header_value)
 end
 
 Then /^I should receive an HTTP (\d+) response with the JSON value "([^\"]*)" for the key path "([^\"]*)"$/ do |status, json_value, key_path|
