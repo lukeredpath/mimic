@@ -18,4 +18,13 @@ end
 
 After do
   Mimic.cleanup!
+  
+  # wait for Mimic to shutdown
+  start_time = Time.now
+
+  until !Mimic::Server.instance.listening?('localhost', 11988)
+    if timeout && (Time.now > (start_time + 10))
+      raise SocketError.new("Socket did not close within #{timeout} seconds")
+    end
+  end
 end
