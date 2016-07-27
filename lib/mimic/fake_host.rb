@@ -58,7 +58,7 @@ module Mimic
       @app = Sinatra.new
       @app.use Rack::CommonLogger, self.log if self.log
       @app.not_found do
-        [404, {}, ""]
+        [404, {}, nil]
       end
       @app.helpers do
         include Helpers
