@@ -19,6 +19,14 @@ Feature: Stubbing requests by path
     When I make an HTTP GET request to "http://localhost:11988/some/path"
     Then I should receive an HTTP 200 response with a body matching "Hello World"
     
+  Scenario: Stubbing a GET request to /some/path and returning a 404 and non-empty response
+    Given I have a mimic specification with:
+      """
+      Mimic.mimic(:port => 11988).get("/some/path").returning("Hello World", 404)
+      """
+    When I make an HTTP GET request to "http://localhost:11988/some/path"
+    Then I should receive an HTTP 404 response with a body matching "Hello World"
+
   Scenario: Requesting an un-stubbed path and getting a 404 response
     Given I have a mimic specification with:
       """
