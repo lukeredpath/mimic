@@ -31,7 +31,7 @@ GEM
     gherkin (3.2.0)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
-    json (1.8.3)
+    json (2.5.1)
     metaclass (0.0.4)
     mime-types (2.99.2)
     mocha (1.1.0)
@@ -44,8 +44,7 @@ GEM
     rack-protection (1.5.3)
       rack
     rake (11.1.2)
-    rdoc (4.2.2)
-      json (~> 1.4)
+    rdoc (6.3.1)
     rest-client (1.8.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
